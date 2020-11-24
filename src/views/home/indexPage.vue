@@ -3,7 +3,7 @@
   <div id="home">
 
           <!-- <img src="./assets/index.jpg"> -->
-          <p>XX小镇</p>
+          <p>统计页面</p>
 
   </div>
      

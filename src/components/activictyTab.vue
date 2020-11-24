@@ -70,13 +70,65 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="detail-form">
+      <el-dialog title="同意报名申请" :visible.sync="dialogFormVisible">
+        <el-form :model="form2">
+          <el-form-item label="序号：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="活动名称：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="用户名：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="预约单位：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="预约人：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="联系电话：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="参加人数：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="预约场次：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="活动时间：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="提交预约时间：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="图片：" :label-width="formLabelWidth">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false"
+            >确 定</el-button
+          >
+        </div>
+      </el-dialog>
+    </div>
   </div>
+  
 </template>
 
 <script>
 export default {
   data() {
     return {
+      formLabelWidth: "120px",
+      dialogFormVisible: false,
+      form2: {
+        name: "123",
+      },
       tableData: [
         {
           date: "2016-05-02",
@@ -121,6 +173,7 @@ export default {
   },
   methods: {
     handleClickTable(row) {
+      this.dialogFormVisible = true;
       console.log(row);
     },
     handleClick(tab, event) {
@@ -134,4 +187,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.detail-form .el-form-item {
+  margin-bottom: 2px;
+}
 </style>
