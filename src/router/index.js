@@ -10,7 +10,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-const Home = () => import('../views/home/index')
+
+const Page = () => import('../views/home/indexPage')
+const Home = () => import('../views/home/menu')
+
 const Login = () => import('../views/login/index')
 
 const Booking = () => import('../views/bookingManagement')
@@ -34,13 +37,23 @@ const User = () => import('../views/userManagement')
 const routes = [
   {
     path: '/',
-    redirect: '/home/booking'
+    redirect: '/home/page'
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
   },
   {
     path: '/home',
     name: 'Home',
     component: Home,
     children: [
+      {
+        path: '/home/page',
+        name: 'Page',
+        component: Page
+      },
       {
         path: '/home/booking',
         name: 'Booking',
@@ -97,11 +110,6 @@ const routes = [
         component: Feedback
       }
     ]
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: Login
   }
 ]
 

@@ -16,6 +16,11 @@
           :collapse="isCollapse"
           :router="true"
         >
+         <el-menu-item index="/home/page">
+            <i class="el-icon-s-home"></i>
+            <span slot="title">首页</span>
+          </el-menu-item>
+
           <el-menu-item index="/home/booking">
             <i class="el-icon-time"></i>
             <span slot="title">预约报名管理</span>
