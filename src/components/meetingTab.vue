@@ -6,10 +6,13 @@
  * @FilePath: \yishangxiaozhen\src\views\businessManagement\index.vue
 -->
 <template>
-    <div id="businessManagement">
+    <div>
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="提交预约时间">
-            <el-col :span="9">
+            <el-form-item label="场地名称">
+                <el-input v-model="formInline.name"></el-input>
+            </el-form-item>
+          <el-form-item label="预约时间">
+            <el-col :span="11">
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
@@ -17,8 +20,8 @@
                 style="width: 100%"
               ></el-date-picker>
             </el-col>
-            <el-col class="line" :span="4">接待预约时间</el-col>
-            <el-col :span="9">
+            <el-col class="line" :span="1">至</el-col>
+            <el-col :span="11">
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
@@ -46,33 +49,31 @@
         <el-table :data="tableData" border style="width: 100%">
           <el-table-column prop="date" label="序号" width="150">
           </el-table-column>
-          <el-table-column prop="name" label="用户名" width="120">
+          <el-table-column prop="name" label="会议室" width="120">
           </el-table-column>
-          <el-table-column prop="province" label="预约单位" width="120">
+          <el-table-column prop="province" label="用户名" width="120">
           </el-table-column>
-          <el-table-column prop="city" label="预约人" width="120">
+          <el-table-column prop="city" label="预约单位" width="120">
           </el-table-column>
-          <el-table-column prop="address" label="联系电话" width="120">
+          <el-table-column prop="address" label="预约人" width="120">
           </el-table-column>
-          <el-table-column prop="zip" label="预约提交时间" width="120">
+          <el-table-column prop="zip" label="联系电话" width="120">
           </el-table-column>
-          <el-table-column prop="zip" label="预约接待时间" width="120">
-          </el-table-column>
-
-          <el-table-column prop="zip" label="参观人数" width="120">
+          <el-table-column prop="zip" label="参会人数" width="120">
           </el-table-column>
 
-          <el-table-column prop="zip" label="参观方式" width="120">
+          <el-table-column prop="zip" label="提交预约时间" width="120">
           </el-table-column>
-          <el-table-column prop="zip" label="图片" width="120">
-          </el-table-column>
-          <el-table-column prop="zip" label="备注" width="120">
+
+          <el-table-column prop="zip" label="预约会议时间" width="120">
           </el-table-column>
           <el-table-column prop="zip" label="状态" width="120">
           </el-table-column>
-
-          <el-table-column label="操作" width="100">
+         
+          <el-table-column label="操作" width="150">
+             
             <template slot-scope="scope">
+              <el-button type="text" size="small">详情</el-button>
               <el-button
                 @click="handleClickTable(scope.row)"
                 type="text"

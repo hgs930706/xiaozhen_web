@@ -6,26 +6,24 @@
  * @FilePath: \yishangxiaozhen\src\views\businessManagement\index.vue
 -->
 <template>
-    <div id="businessManagement">
+    <div>
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="提交预约时间">
-            <el-col :span="9">
+          <el-form-item label="提交预约时间">           
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
                 v-model="formInline.date1"
                 style="width: 100%"
-              ></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="4">接待预约时间</el-col>
-            <el-col :span="9">
+              ></el-date-picker>           
+          </el-form-item>
+          <el-form-item label="接待预约时间">           
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
-                v-model="formInline.date1"
+                v-model="formInline.date2"
                 style="width: 100%"
               ></el-date-picker>
-            </el-col>
+         
           </el-form-item>
 
           <el-form-item label="状态">
