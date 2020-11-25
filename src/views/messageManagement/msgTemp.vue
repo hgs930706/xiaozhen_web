@@ -12,21 +12,20 @@
         <el-form-item label="模板名称">
           <el-input v-model="formInline.name"></el-input>
         </el-form-item>
-        <el-form-item label="创建时间">         
-            <el-date-picker
-              type="date"
-              placeholder="选择日期"
-              v-model="formInline.date1"
-              style="width: 100%"
-            ></el-date-picker>         
+        <el-form-item label="创建时间">
+          <el-date-picker
+            type="date"
+            placeholder="选择日期"
+            v-model="formInline.date1"
+            style="width: 100%"
+          ></el-date-picker>
         </el-form-item>
 
-      
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">新建</el-button>
+          <el-button type="primary" @click="insert">新建</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
@@ -34,11 +33,11 @@
         </el-table-column>
         <el-table-column prop="name" label="模板名称" width="120">
         </el-table-column>
-         <el-table-column prop="name" label="模板ID" width="120">
+        <el-table-column prop="name" label="模板ID" width="120">
         </el-table-column>
         <el-table-column prop="province" label="创建时间" width="120">
-        </el-table-column>        
-       
+        </el-table-column>
+
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button
@@ -63,6 +62,29 @@
       >
       </el-pagination>
     </div>
+    <div class="detail-form">
+      <el-dialog title="新建" :visible.sync="dialogFormVisible">
+        <el-form ref="form" :model="form" label-width="100px">
+          <el-form-item label="模板名称：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="模板id：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">立即创建</el-button>
+            <el-button>取消</el-button>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false"
+            >确 定</el-button
+          >
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -70,6 +92,19 @@
 export default {
   data() {
     return {
+      dialogFormVisible: false,
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        type1: [],
+        type2: [],
+        resource: "",
+        desc: "",
+      },
       tableData: [
         {
           date: "2016-05-02",
@@ -113,6 +148,9 @@ export default {
     };
   },
   methods: {
+    insert() {
+      this.dialogFormVisible = true;
+    },
     handleClickTable(row) {
       console.log(row);
     },

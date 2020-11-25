@@ -142,6 +142,7 @@
         </div>
       </el-dialog>
     </div>
+    
     <div class="detail-form">
       <el-dialog title="会议场地详情" :visible.sync="dialogFormVisibleDetail">
         <el-form :model="form2">

@@ -12,8 +12,19 @@ import store from './store'
 
 import elementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
 Vue.use(elementUI)
+
+// 导入axios
+import axios from 'axios'
+Vue.prototype.$axios = axios;
+//默认地址和端口，自行修改。
+axios.defaults.baseURL = 'http://localhost:8080'; //本地
+
+//没有此设置，后端无法将数据保存到cookie中
+axios.defaults.withCredentials = true;
+
+
+
 
 Vue.config.productionTip = false
 

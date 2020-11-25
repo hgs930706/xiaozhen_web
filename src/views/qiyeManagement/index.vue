@@ -7,8 +7,7 @@
 -->
 <template>
   <div>
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">    
-
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="街区">
         <el-select v-model="formInline.region" placeholder="审批状态">
           <el-option label="全部" value=""></el-option>
@@ -17,7 +16,7 @@
           <el-option label="拒绝" value="2"></el-option>
         </el-select>
       </el-form-item>
-       <el-form-item label="企业名称">
+      <el-form-item label="企业名称">
         <el-input v-model="formInline.name"></el-input>
       </el-form-item>
 
@@ -27,14 +26,13 @@
       <el-form-item>
         <el-button type="primary" @click="onSubmit">导出</el-button>
       </el-form-item>
-       <el-form-item>
-        <el-button type="primary" @click="onSubmit">新建</el-button>
+      <el-form-item>
+        <el-button type="primary" @click="insert">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column prop="date" label="序号" width="150"> </el-table-column>
-      <el-table-column prop="name" label="街区" width="120">
-      </el-table-column>
+      <el-table-column prop="name" label="街区" width="120"> </el-table-column>
       <el-table-column prop="province" label="企业名称" width="120">
       </el-table-column>
       <el-table-column prop="city" label="企业地址" width="120">
@@ -47,7 +45,7 @@
       </el-table-column>
 
       <el-table-column prop="zip" label="二维码" width="120"> </el-table-column>
-       <el-table-column prop="zip" label="图片" width="120"> </el-table-column>
+      <el-table-column prop="zip" label="图片" width="120"> </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -61,6 +59,69 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="detail-form">
+      <el-dialog title="新建" :visible.sync="dialogFormVisible">
+        <el-form ref="form" :model="form" label-width="100px">
+          <el-form-item label="序号">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="街区">
+            <el-checkbox-group v-model="form.type">
+              <el-checkbox label="时尚文化街区" name="type"></el-checkbox>
+              <el-checkbox label="时尚艺术街区" name="type"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="企业名称：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="企业地址：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="企业网站：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>       
+          <el-form-item label="图片">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="企业二维码">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="企业详情：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">立即创建</el-button>
+            <el-button>取消</el-button>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false"
+            >确 定</el-button
+          >
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -68,6 +129,7 @@
 export default {
   data() {
     return {
+      dialogFormVisible: false,
       tableData: [
         {
           date: "2016-05-02",
@@ -102,6 +164,18 @@ export default {
           zip: 200333,
         },
       ],
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        type1: [],
+        type2: [],
+        resource: "",
+        desc: "",
+      },
       formInline: {
         user: "",
         region: "",
@@ -111,6 +185,9 @@ export default {
     };
   },
   methods: {
+    insert() {
+      this.dialogFormVisible = true;
+    },
     handleClickTable(row) {
       console.log(row);
     },
@@ -125,4 +202,27 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>

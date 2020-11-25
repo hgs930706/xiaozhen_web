@@ -44,7 +44,7 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">新建</el-button>
+          <el-button type="primary" @click="insert">新建</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
@@ -69,13 +69,8 @@
 
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
-            <el-button
-              @click="handleClickTable(scope.row)"
-              type="text"
-              size="small"
-              >详情</el-button
-            >
-            <el-button type="text" size="small">添加场次</el-button>
+            <el-button @click="handleClickTable(scope.row)" type="text" size="small">详情</el-button>
+            <el-button @click="handleClickCount(scope.row)" type="text" size="small">添加场次</el-button>
             <el-button type="text" size="small">编辑</el-button>
           </template>
         </el-table-column>
@@ -93,6 +88,118 @@
       >
       </el-pagination>
     </div>
+    <div class="detail-form">
+      <el-dialog title="新建" :visible.sync="dialogFormVisible">
+        <el-form ref="form" :model="form" label-width="100px">
+          <el-form-item label="序号">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="活动名称：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="活动场次：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="活动时间：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="活动地址：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="活动内容：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="图片">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="活动备注：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+
+          <el-form-item label="状态">
+            <el-radio-group v-model="form.resource">
+              <el-radio label="正常"></el-radio>
+              <el-radio label="停用"></el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">立即创建</el-button>
+            <el-button>取消</el-button>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false"
+            >确 定</el-button
+          >
+        </div>
+      </el-dialog>
+    </div>
+
+    <div class="detail-form">
+      <el-dialog title="活动详情" :visible.sync="dialogFormVisibleDetail">
+        <el-form :model="form2" label-width="120px">
+          <el-form-item label="序号：">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+          <el-form-item label="会议室名称：">
+            <labe>{{ form2.name }}</labe>
+          </el-form-item>
+        </el-form>
+        <el-table :data="tableData2" border style="width: 100%">
+          <el-table-column prop="date" label="活动场次" width="150">
+          </el-table-column>
+          <el-table-column prop="province" label="活动时间" width="120">
+          </el-table-column>
+
+          <el-table-column label="操作" width="150">
+            <template slot-scope="scope">
+              <el-button
+                @click="handleClickTable(scope.row)"
+                type="text"
+                size="small"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
+    </div>
+
+    <div class="detail-form">
+      <el-dialog title="活动-添加场次" :visible.sync="dialogFormVisibleCount">
+        <el-form ref="form" :model="form" label-width="100px">
+        
+          <el-form-item label="活动场次：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="活动时间：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>          
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">立即创建</el-button>
+            <el-button>取消</el-button>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false"
+            >确 定</el-button
+          >
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -100,6 +207,24 @@
 export default {
   data() {
     return {
+      dialogFormVisibleCount: false,
+      dialogFormVisibleDetail: false,
+      dialogFormVisible: false,
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        type1: [],
+        type2: [],
+        resource: "",
+        desc: "",
+      },
+      form2: {
+        name: "123",
+      },
       tableData: [
         {
           date: "2016-05-02",
@@ -134,6 +259,7 @@ export default {
           zip: 200333,
         },
       ],
+      tableData2: [],
       formInline: {
         user: "",
         region: "",
@@ -143,7 +269,14 @@ export default {
     };
   },
   methods: {
+    insert() {
+      this.dialogFormVisible = true;
+    },
+    handleClickCount(){
+      this.dialogFormVisibleCount = true;
+    },
     handleClickTable(row) {
+      this.dialogFormVisibleDetail = true;
       console.log(row);
     },
     handleClick(tab, event) {

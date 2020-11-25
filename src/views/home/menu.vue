@@ -98,6 +98,7 @@
 export default {
   data() {
     return {
+      bottom: "bottom",
       isCollapse: false,
     };
   },

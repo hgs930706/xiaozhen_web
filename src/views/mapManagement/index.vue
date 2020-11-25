@@ -9,9 +9,7 @@
   <div>
     <el-form :inline="true" :model="formInline" class="demo-form-inline"> 
       <el-form-item label="地图管理"></el-form-item>
-       <el-form-item>
-        <el-button type="primary" @click="onSubmit">新建</el-button>
-      </el-form-item>
+      
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column prop="date" label="序号" width="150"> </el-table-column>
@@ -34,6 +32,29 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="detail-form">
+      <el-dialog title="编辑" :visible.sync="dialogFormVisible">
+        <el-form ref="form" :model="form" label-width="100px">
+          <el-form-item label="名称：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="跳转地址：">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">立即创建</el-button>
+            <el-button>取消</el-button>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false"
+            >确 定</el-button
+          >
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -41,6 +62,7 @@
 export default {
   data() {
     return {
+      dialogFormVisible:false,
       tableData: [
         {
           date: "2016-05-02",
@@ -81,10 +103,23 @@ export default {
         date1: "",
         date2: "",
       },
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        type1: [],
+        type2: [],
+        resource: "",
+        desc: "",
+      },
     };
   },
   methods: {
     handleClickTable(row) {
+      this.dialogFormVisible = true
       console.log(row);
     },
     handleClick(tab, event) {
