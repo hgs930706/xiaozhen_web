@@ -29,13 +29,12 @@
         </el-form-item>
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="date" label="序号" width="150">
+        <el-table-column type="index" width="50" label="序号"></el-table-column>
+        <el-table-column prop="templateName" label="模板名称" width="120">
         </el-table-column>
-        <el-table-column prop="name" label="模板名称" width="120">
+        <el-table-column prop="templateId" label="模板ID" width="120">
         </el-table-column>
-        <el-table-column prop="name" label="模板ID" width="120">
-        </el-table-column>
-        <el-table-column prop="province" label="创建时间" width="120">
+        <el-table-column prop="createTime" label="创建时间" width="120">
         </el-table-column>
 
         <el-table-column label="操作" width="150">
@@ -105,40 +104,7 @@ export default {
         resource: "",
         desc: "",
       },
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       formInline: {
         user: "",
         region: "",
@@ -146,6 +112,15 @@ export default {
         date2: "",
       },
     };
+  },
+   created() {
+    this.$axios
+      .get(`/template/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     insert() {

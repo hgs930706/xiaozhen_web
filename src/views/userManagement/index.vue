@@ -7,11 +7,11 @@
 -->
 <template>
   <div>
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">    
-<el-form-item label="用户名">
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <el-form-item label="用户名">
         <el-input v-model="formInline.name"></el-input>
       </el-form-item>
-     <el-form-item label="角色">
+      <el-form-item label="角色">
         <el-select v-model="formInline.region" placeholder="审批状态">
           <el-option label="全部" value=""></el-option>
           <el-option label="待审批" value="0"></el-option>
@@ -27,32 +27,35 @@
           <el-option label="拒绝" value="2"></el-option>
         </el-select>
       </el-form-item>
-       
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
-      
-       <el-form-item>
+
+      <el-form-item>
         <el-button type="primary" @click="insert">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="序号" width="150"> </el-table-column>
-      <el-table-column prop="name" label="用户名" width="120">
+     <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="username" label="用户名" width="120">
       </el-table-column>
-      <el-table-column prop="province" label="姓名" width="120">
+      <el-table-column prop="realName" label="姓名" width="120">
       </el-table-column>
-      <el-table-column prop="city" label="角色" width="120">
+      <el-table-column prop="realName" label="角色" width="120"> </el-table-column>
+      <el-table-column prop="username" label="联系电话" width="120">
       </el-table-column>
-      <el-table-column prop="address" label="联系电话" width="120">
-      </el-table-column>
-      <el-table-column prop="zip" label="状态" width="120">
-      </el-table-column>
-      <el-table-column prop="zip" label="头像" width="120">
+      <el-table-column prop="isStatus" label="状态" width="120"> </el-table-column>
+      <el-table-column prop="userImage" label="头像" width="120"> 
+         <template slot-scope="scope">
+          <div class="moreImg">
+            <el-image :src="scope.row.userImage"></el-image>
+          </div>
+        </template>
       </el-table-column>
 
-      <el-table-column prop="zip" label="创建时间" width="120"> </el-table-column>       
+      <el-table-column prop="createTime" label="创建时间" width="120">
+      </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -77,8 +80,8 @@
           <el-form-item label="真实姓名：">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
-        
-<el-form-item label="图片">
+
+          <el-form-item label="图片">
             <el-upload
               class="avatar-uploader"
               action="https://jsonplaceholder.typicode.com/posts/"
@@ -118,40 +121,7 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       formInline: {
         user: "",
         region: "",
@@ -172,9 +142,18 @@ export default {
       },
     };
   },
+  created() {
+    this.$axios
+      .get(`/adminUser/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
+  },
   methods: {
-    insert(){
-this.dialogFormVisible = true;
+    insert() {
+      this.dialogFormVisible = true;
     },
     handleClickTable(row) {
       console.log(row);
@@ -190,4 +169,20 @@ this.dialogFormVisible = true;
 </script>
 
 <style lang="less" scoped>
+.wrap {
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+.moreImg {
+  display: flex;
+  flex-wrap: wrap;
+  .el-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
 </style>

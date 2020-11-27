@@ -12,14 +12,13 @@
       
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="序号" width="150"> </el-table-column>
-      <el-table-column prop="name" label="名称" width="120">
+     <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="name" label="名称">
       </el-table-column>
-      <el-table-column prop="province" label="跳转地址" width="120">
+      <el-table-column prop="content" label="跳转地址">
       </el-table-column>
 
-      <el-table-column prop="zip" label="创建时间" width="120"> </el-table-column>  
-       <el-table-column prop="zip" label="修改时间" width="120"> </el-table-column>       
+    
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -116,6 +115,15 @@ export default {
         desc: "",
       },
     };
+  },
+   created() {
+    this.$axios
+      .get(`/dict/maps`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data;
+      })
+      .catch((error) => {});
   },
   methods: {
     handleClickTable(row) {

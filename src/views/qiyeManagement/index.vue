@@ -31,21 +31,21 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="序号" width="150"> </el-table-column>
-      <el-table-column prop="name" label="街区" width="120"> </el-table-column>
-      <el-table-column prop="province" label="企业名称" width="120">
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="streetType" label="街区" width="120"> </el-table-column>
+      <el-table-column prop="enterpriseName" label="企业名称" width="120">
       </el-table-column>
-      <el-table-column prop="city" label="企业地址" width="120">
+      <el-table-column prop="enterpriseEnterAddress" label="企业地址" width="120">
       </el-table-column>
-      <el-table-column prop="address" label="联系电话" width="120">
+      <el-table-column prop="enterpriseMobile" label="联系电话" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="企业网站" width="120">
+      <el-table-column prop="enterpriseWeb" label="企业网站" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="企业详情" width="120">
+      <el-table-column prop="enterpriseDetail" label="企业详情" width="120">
       </el-table-column>
 
-      <el-table-column prop="zip" label="二维码" width="120"> </el-table-column>
-      <el-table-column prop="zip" label="图片" width="120"> </el-table-column>
+      <el-table-column prop="enterpriseQr" label="二维码" width="120"> </el-table-column>
+      <el-table-column prop="enterpriseLogo" label="图片" width="120"> </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -183,6 +183,15 @@ export default {
         date2: "",
       },
     };
+  },
+   created() {
+    this.$axios
+      .get(`/enterpriseInfo/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     insert() {

@@ -31,8 +31,12 @@
       </el-form>
      
     </div>
-    <div v-for="item in test" :key="item">
-        <p>哈哈哈哈哈哈哈或或或或或或或或或{{item}}</p>
+    <div v-for="item in tableData" :key="item">
+      <div style="background-color:#ccc">
+          <p>{{item.createTime}}</p>
+          <p>{{item.openId}}</p>
+          <p>{{item.remark}}</p>
+      </div>        
     </div>
     <div class="block">
       <span class="demonstration">直接前往</span>
@@ -54,40 +58,7 @@ export default {
   data() {
     return {
         test:[1,2,3],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       formInline: {
         user: "",
         region: "",
@@ -95,6 +66,15 @@ export default {
         date2: "",
       },
     };
+  },
+   created() {
+    this.$axios
+      .get(`/feedback/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     handleClickTable(row) {

@@ -37,24 +37,23 @@
         </el-form-item>
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="date" label="序号" width="150">
+       <el-table-column type="index" width="50" label="序号"></el-table-column>
+        <el-table-column prop="openId" label="发送至" width="120">
         </el-table-column>
-        <el-table-column prop="name" label="活动名称" width="120">
+         <el-table-column prop="nickname" label="微信昵称" width="120">
         </el-table-column>
-        <el-table-column prop="province" label="活动时间" width="120">
+        <el-table-column prop="msgType" label="消息类型" width="120">
         </el-table-column>
-        <el-table-column prop="city" label="活动详情" width="120">
+        <el-table-column prop="name" label="预约名称" width="120">
+        </el-table-column>      
+        <el-table-column prop="receiveAddress" label="预约地址" width="120">
         </el-table-column>
-        <el-table-column prop="address" label="活动地址" width="120">
-        </el-table-column>
-        <el-table-column prop="zip" label="活动场数" width="120">
-        </el-table-column>
-        <el-table-column prop="zip" label="活动备注" width="120">
+        <el-table-column prop="bookingTime" label="预约时间" width="120">
         </el-table-column>
 
-        <el-table-column prop="zip" label="图片" width="120"> </el-table-column>
+        <el-table-column prop="createTime" label="消息发送时间" width="120"> </el-table-column>
 
-        <el-table-column prop="zip" label="状态" width="120"> </el-table-column>
+        <el-table-column prop="sendStatus" label="发送状态" width="120"> </el-table-column>
 
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -89,40 +88,7 @@
 export default {
   data() {
     return {
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       formInline: {
         user: "",
         region: "",
@@ -130,6 +96,15 @@ export default {
         date2: "",
       },
     };
+  },
+  created() {
+    this.$axios
+      .get(`/msgAction/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     handleClickTable(row) {
