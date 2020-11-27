@@ -39,8 +39,8 @@
       </div>        
     </div>
     <div class="block">
-      <span class="demonstration">直接前往</span>
       <el-pagination
+       style="text-align:right;"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage3"
@@ -57,6 +57,7 @@
 export default {
   data() {
     return {
+      currentPage3: 5,
         test:[1,2,3],
       tableData: [],
       formInline: {
@@ -77,6 +78,12 @@ export default {
       .catch((error) => {});
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     handleClickTable(row) {
       console.log(row);
     },

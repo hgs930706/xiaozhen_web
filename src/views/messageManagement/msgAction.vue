@@ -38,22 +38,22 @@
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
        <el-table-column type="index" width="50" label="序号"></el-table-column>
-        <el-table-column prop="openId" label="发送至" width="120">
+        <el-table-column prop="openId" label="发送至" >
         </el-table-column>
-         <el-table-column prop="nickname" label="微信昵称" width="120">
+         <el-table-column prop="nickname" label="微信昵称" >
         </el-table-column>
-        <el-table-column prop="msgType" label="消息类型" width="120">
+        <el-table-column prop="msgType" label="消息类型" >
         </el-table-column>
-        <el-table-column prop="name" label="预约名称" width="120">
+        <el-table-column prop="name" label="预约名称" >
         </el-table-column>      
-        <el-table-column prop="receiveAddress" label="预约地址" width="120">
+        <el-table-column prop="receiveAddress" label="预约地址" >
         </el-table-column>
-        <el-table-column prop="bookingTime" label="预约时间" width="120">
+        <el-table-column prop="bookingTime" label="预约时间" >
         </el-table-column>
 
-        <el-table-column prop="createTime" label="消息发送时间" width="120"> </el-table-column>
+        <el-table-column prop="createTime" label="消息发送时间" > </el-table-column>
 
-        <el-table-column prop="sendStatus" label="发送状态" width="120"> </el-table-column>
+        <el-table-column prop="sendStatus" label="发送状态" > </el-table-column>
 
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -70,8 +70,8 @@
       </el-table>
     </div>
     <div class="block">
-      <span class="demonstration">直接前往</span>
       <el-pagination
+       style="text-align:right;"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage3"
@@ -88,6 +88,7 @@
 export default {
   data() {
     return {
+      currentPage3: 5,
       tableData: [],
       formInline: {
         user: "",
@@ -107,6 +108,12 @@ export default {
       .catch((error) => {});
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     handleClickTable(row) {
       console.log(row);
     },

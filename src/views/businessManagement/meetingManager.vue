@@ -29,13 +29,13 @@
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="meetingName" label="会议室" width="120">
+      <el-table-column prop="meetingName" label="会议室" >
       </el-table-column>
-      <el-table-column prop="meetingAddress" label="会议室地址" width="120">
+      <el-table-column prop="meetingAddress" label="会议室地址" >
       </el-table-column>
-      <el-table-column prop="meetingDateil" label="会议室简介" width="120">
+      <el-table-column prop="meetingDateil" label="会议室简介" >
       </el-table-column>
-      <el-table-column prop="meetingCapacity" label="可容纳人数" width="120">
+      <el-table-column prop="meetingCapacity" label="可容纳人数" >
       </el-table-column>     
       <el-table-column prop="meetingImage" label="图片" width="200">
         <template slot-scope="scope">
@@ -44,10 +44,10 @@
           </div>
         </template>
          </el-table-column>
-      <el-table-column prop="meetingRemark" label="会议室备注" width="120">
+      <el-table-column prop="meetingRemark" label="会议室备注" >
       </el-table-column>
 
-      <el-table-column prop="isStatus" label="状态" width="120"> </el-table-column>
+      <el-table-column prop="isStatus" label="状态" > </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -62,8 +62,8 @@
       </el-table-column>
     </el-table>
     <div class="block">
-      <span class="demonstration">直接前往</span>
       <el-pagination
+       style="text-align:right;"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage3"

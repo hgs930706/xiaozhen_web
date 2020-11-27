@@ -48,25 +48,25 @@
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="name" label="会议室" width="120">
+      <el-table-column prop="name" label="会议室" >
       </el-table-column>
-      <el-table-column prop="openId" label="用户名" width="120">
+      <el-table-column prop="openId" label="用户名" >
       </el-table-column>
-      <el-table-column prop="bookingUnit" label="预约单位" width="120">
+      <el-table-column prop="bookingUnit" label="预约单位" >
       </el-table-column>
-      <el-table-column prop="bookingPerson" label="预约人" width="120">
+      <el-table-column prop="bookingPerson" label="预约人" >
       </el-table-column>
-      <el-table-column prop="mobile" label="联系电话" width="120">
+      <el-table-column prop="mobile" label="联系电话" >
       </el-table-column>
-      <el-table-column prop="joinPeople" label="参会人数" width="120">
-      </el-table-column>
-
-      <el-table-column prop="createTime" label="提交预约时间" width="120">
+      <el-table-column prop="joinPeople" label="参会人数" >
       </el-table-column>
 
-      <el-table-column prop="bookingStartTime" label="预约会议时间" width="120">
+      <el-table-column prop="createTime" label="提交预约时间" >
       </el-table-column>
-      <el-table-column prop="approvalStatus" label="状态" width="120"> </el-table-column>
+
+      <el-table-column prop="bookingStartTime" label="预约会议时间" >
+      </el-table-column>
+      <el-table-column prop="approvalStatus" label="状态" > </el-table-column>
 
       <el-table-column label="操作" width="150">
         <template slot-scope="scope">
@@ -86,6 +86,18 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="block" >
+      <el-pagination
+        style="text-align:right;"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage3"
+        :page-size="100"
+        layout="prev, pager, next, jumper"
+        :total="1000"
+      >
+      </el-pagination>
+    </div>
 
     <div class="detail-form">
       <el-dialog title="同意预约申请" :visible.sync="dialogFormVisible">
@@ -199,6 +211,7 @@
 export default {
   data() {
     return {
+      currentPage3: 5,
        formLabelWidth: "120px",
       dialogFormVisible: false,
       dialogFormVisibleDetail: false,
@@ -224,6 +237,12 @@ export default {
       .catch((error) => {});
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     handleClickTable(row) {
       // this.dialogFormVisible = true
       this.dialogFormVisibleDetail = true

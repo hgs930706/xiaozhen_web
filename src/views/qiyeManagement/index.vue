@@ -32,20 +32,20 @@
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="streetType" label="街区" width="120"> </el-table-column>
-      <el-table-column prop="enterpriseName" label="企业名称" width="120">
+      <el-table-column prop="streetType" label="街区" > </el-table-column>
+      <el-table-column prop="enterpriseName" label="企业名称" >
       </el-table-column>
-      <el-table-column prop="enterpriseEnterAddress" label="企业地址" width="120">
+      <el-table-column prop="enterpriseEnterAddress" label="企业地址" >
       </el-table-column>
-      <el-table-column prop="enterpriseMobile" label="联系电话" width="120">
+      <el-table-column prop="enterpriseMobile" label="联系电话" >
       </el-table-column>
-      <el-table-column prop="enterpriseWeb" label="企业网站" width="120">
+      <el-table-column prop="enterpriseWeb" label="企业网站" >
       </el-table-column>
-      <el-table-column prop="enterpriseDetail" label="企业详情" width="120">
+      <el-table-column prop="enterpriseDetail" label="企业详情" >
       </el-table-column>
 
-      <el-table-column prop="enterpriseQr" label="二维码" width="120"> </el-table-column>
-      <el-table-column prop="enterpriseLogo" label="图片" width="120"> </el-table-column>
+      <el-table-column prop="enterpriseQr" label="二维码" > </el-table-column>
+      <el-table-column prop="enterpriseLogo" label="图片" > </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -59,6 +59,19 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="block" >
+      
+      <el-pagination
+        style="text-align:right;"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage3"
+        :page-size="100"
+        layout="prev, pager, next, jumper"
+        :total="1000"
+      >
+      </el-pagination>
+    </div>
     <div class="detail-form">
       <el-dialog title="新建" :visible.sync="dialogFormVisible">
         <el-form ref="form" :model="form" label-width="100px">
@@ -129,6 +142,7 @@
 export default {
   data() {
     return {
+      currentPage3: 5,
       dialogFormVisible: false,
       tableData: [
         {
@@ -194,6 +208,12 @@ export default {
       .catch((error) => {});
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     insert() {
       this.dialogFormVisible = true;
     },

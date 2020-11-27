@@ -30,11 +30,11 @@
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column type="index" width="50" label="序号"></el-table-column>
-        <el-table-column prop="templateName" label="模板名称" width="120">
+        <el-table-column prop="templateName" label="模板名称" >
         </el-table-column>
-        <el-table-column prop="templateId" label="模板ID" width="120">
+        <el-table-column prop="templateId" label="模板ID" >
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="120">
+        <el-table-column prop="createTime" label="创建时间" >
         </el-table-column>
 
         <el-table-column label="操作" width="150">
@@ -49,9 +49,9 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="block">
-      <span class="demonstration">直接前往</span>
+    <div class="block" >
       <el-pagination
+        style="text-align:right;"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage3"
@@ -91,6 +91,7 @@
 export default {
   data() {
     return {
+      currentPage3: 5,
       dialogFormVisible: false,
       form: {
         name: "",
@@ -123,6 +124,12 @@ export default {
       .catch((error) => {});
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     insert() {
       this.dialogFormVisible = true;
     },

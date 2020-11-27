@@ -38,15 +38,15 @@
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
      <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="username" label="用户名" width="120">
+      <el-table-column prop="username" label="用户名" >
       </el-table-column>
-      <el-table-column prop="realName" label="姓名" width="120">
+      <el-table-column prop="realName" label="姓名" >
       </el-table-column>
-      <el-table-column prop="realName" label="角色" width="120"> </el-table-column>
-      <el-table-column prop="username" label="联系电话" width="120">
+      <el-table-column prop="realName" label="角色" > </el-table-column>
+      <el-table-column prop="username" label="联系电话" >
       </el-table-column>
-      <el-table-column prop="isStatus" label="状态" width="120"> </el-table-column>
-      <el-table-column prop="userImage" label="头像" width="120"> 
+      <el-table-column prop="isStatus" label="状态" > </el-table-column>
+      <el-table-column prop="userImage" label="头像" > 
          <template slot-scope="scope">
           <div class="moreImg">
             <el-image :src="scope.row.userImage"></el-image>
@@ -54,7 +54,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="createTime" label="创建时间" width="120">
+      <el-table-column prop="createTime" label="创建时间" >
       </el-table-column>
 
       <el-table-column label="操作" width="100">
@@ -68,6 +68,18 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="block" >
+      <el-pagination
+        style="text-align:right;"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage3"
+        :page-size="100"
+        layout="prev, pager, next, jumper"
+        :total="1000"
+      >
+      </el-pagination>
+    </div>
     <div class="detail-form">
       <el-dialog title="新建" :visible.sync="dialogFormVisible">
         <el-form ref="form" :model="form" label-width="100px">
@@ -120,6 +132,7 @@
 export default {
   data() {
     return {
+      currentPage3: 5,
       dialogFormVisible: false,
       tableData: [],
       formInline: {
@@ -152,6 +165,12 @@ export default {
       .catch((error) => {});
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     insert() {
       this.dialogFormVisible = true;
     },

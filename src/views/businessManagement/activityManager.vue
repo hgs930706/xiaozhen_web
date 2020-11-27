@@ -49,20 +49,20 @@
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column type="index" width="50" label="序号"></el-table-column>
-        <el-table-column prop="activityName" label="活动名称" width="120">
+        <el-table-column prop="activityName" label="活动名称" >
         </el-table-column>
-        <el-table-column prop="startTime" label="活动时间" width="120">
+        <el-table-column prop="startTime" label="活动时间" >
         </el-table-column>
-        <el-table-column prop="activityDetail" label="活动详情" width="120">
+        <el-table-column prop="activityDetail" label="活动详情" >
         </el-table-column>
-        <el-table-column prop="activityAddress" label="活动地址" width="120">
+        <el-table-column prop="activityAddress" label="活动地址" >
         </el-table-column>
-        <el-table-column prop="activityAddress" label="活动场数" width="120">
+        <el-table-column prop="activityAddress" label="活动场数" >
         </el-table-column>
-        <el-table-column prop="activityRemark" label="活动备注" width="120">
+        <el-table-column prop="activityRemark" label="活动备注" >
         </el-table-column>
 
-        <el-table-column prop="activityImage" label="图片" width="120"> 
+        <el-table-column prop="activityImage" label="图片" > 
           <template slot-scope="scope">
           <div class="moreImg">
             <el-image :src="scope.row.activityImage"></el-image>
@@ -70,7 +70,7 @@
         </template>
         </el-table-column>
 
-        <el-table-column prop="isStatus" label="状态" width="120"> </el-table-column>
+        <el-table-column prop="isStatus" label="状态" > </el-table-column>
 
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -82,8 +82,8 @@
       </el-table>
     </div>
     <div class="block">
-      <span class="demonstration">直接前往</span>
       <el-pagination
+       style="text-align:right;"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage3"
@@ -164,7 +164,7 @@
         <el-table :data="tableData2" border style="width: 100%">
           <el-table-column prop="date" label="活动场次" width="150">
           </el-table-column>
-          <el-table-column prop="province" label="活动时间" width="120">
+          <el-table-column prop="province" label="活动时间" >
           </el-table-column>
 
           <el-table-column label="操作" width="150">
@@ -212,6 +212,7 @@
 export default {
   data() {
     return {
+      currentPage3: 5,
       dialogFormVisibleCount: false,
       dialogFormVisibleDetail: false,
       dialogFormVisible: false,
@@ -250,6 +251,12 @@ export default {
       .catch((error) => {});
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     insert() {
       this.dialogFormVisible = true;
     },
