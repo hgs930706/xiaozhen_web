@@ -48,24 +48,29 @@
         </el-form-item>
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="date" label="序号" width="150">
+        <el-table-column type="index" width="50" label="序号"></el-table-column>
+        <el-table-column prop="activityName" label="活动名称" width="120">
         </el-table-column>
-        <el-table-column prop="name" label="活动名称" width="120">
+        <el-table-column prop="startTime" label="活动时间" width="120">
         </el-table-column>
-        <el-table-column prop="province" label="活动时间" width="120">
+        <el-table-column prop="activityDetail" label="活动详情" width="120">
         </el-table-column>
-        <el-table-column prop="city" label="活动详情" width="120">
+        <el-table-column prop="activityAddress" label="活动地址" width="120">
         </el-table-column>
-        <el-table-column prop="address" label="活动地址" width="120">
+        <el-table-column prop="activityAddress" label="活动场数" width="120">
         </el-table-column>
-        <el-table-column prop="zip" label="活动场数" width="120">
-        </el-table-column>
-        <el-table-column prop="zip" label="活动备注" width="120">
+        <el-table-column prop="activityRemark" label="活动备注" width="120">
         </el-table-column>
 
-        <el-table-column prop="zip" label="图片" width="120"> </el-table-column>
+        <el-table-column prop="activityImage" label="图片" width="120"> 
+          <template slot-scope="scope">
+          <div class="moreImg">
+            <el-image :src="scope.row.activityImage"></el-image>
+          </div>
+        </template>
+        </el-table-column>
 
-        <el-table-column prop="zip" label="状态" width="120"> </el-table-column>
+        <el-table-column prop="isStatus" label="状态" width="120"> </el-table-column>
 
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -225,40 +230,7 @@ export default {
       form2: {
         name: "123",
       },
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       tableData2: [],
       formInline: {
         user: "",
@@ -267,6 +239,15 @@ export default {
         date2: "",
       },
     };
+  },
+  created() {
+    this.$axios
+      .get(`/activity/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     insert() {
@@ -290,4 +271,20 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.wrap {
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+.moreImg {
+  display: flex;
+  flex-wrap: wrap;
+  .el-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
 </style>

@@ -17,13 +17,12 @@ Vue.use(elementUI)
 // 导入axios
 import axios from 'axios'
 Vue.prototype.$axios = axios;
+Vue.prototype.$host = 'http://localhost:8081';
 //默认地址和端口，自行修改。
-axios.defaults.baseURL = 'http://localhost:8080'; //本地
+axios.defaults.baseURL = 'http://localhost:8081'; //本地
 
 //没有此设置，后端无法将数据保存到cookie中
 axios.defaults.withCredentials = true;
-
-
 
 
 Vue.config.productionTip = false

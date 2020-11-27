@@ -28,20 +28,26 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="序号" width="150"> </el-table-column>
-      <el-table-column prop="name" label="会议室" width="120">
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="meetingName" label="会议室" width="120">
       </el-table-column>
-      <el-table-column prop="province" label="会议室地址" width="120">
+      <el-table-column prop="meetingAddress" label="会议室地址" width="120">
       </el-table-column>
-      <el-table-column prop="city" label="会议室简介" width="120">
+      <el-table-column prop="meetingDateil" label="会议室简介" width="120">
       </el-table-column>
-      <el-table-column prop="address" label="可容纳人数" width="120">
-      </el-table-column>
-      <el-table-column prop="zip" label="图片" width="120"> </el-table-column>
-      <el-table-column prop="zip" label="会议室备注" width="120">
+      <el-table-column prop="meetingCapacity" label="可容纳人数" width="120">
+      </el-table-column>     
+      <el-table-column prop="meetingImage" label="图片" width="200">
+        <template slot-scope="scope">
+          <div class="moreImg">
+            <el-image :src="scope.row.meetingImage"></el-image>
+          </div>
+        </template>
+         </el-table-column>
+      <el-table-column prop="meetingRemark" label="会议室备注" width="120">
       </el-table-column>
 
-      <el-table-column prop="zip" label="状态" width="120"> </el-table-column>
+      <el-table-column prop="isStatus" label="状态" width="120"> </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -194,40 +200,7 @@ export default {
       dialogFormVisible: false,
       dialogFormVisibleDetail: false,
       currentPage3: 5,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       formInline: {
         user: "",
         region: "",
@@ -250,6 +223,15 @@ export default {
         name: "123",
       },
     };
+  },
+  created() {
+    this.$axios
+      .get(`/meetingArea/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     handleSizeChange(val) {
@@ -330,5 +312,21 @@ export default {
 }
 .detail-form .el-form-item {
   margin-bottom: 6px;
+}
+.wrap {
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+.moreImg {
+  display: flex;
+  flex-wrap: wrap;
+  .el-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
 }
 </style>

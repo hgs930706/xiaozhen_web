@@ -36,27 +36,43 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="序号" width="150"> </el-table-column>
-      <el-table-column prop="name" label="活动名称" width="120">
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="activityName" label="活动名称" width="120">
       </el-table-column>
-      <el-table-column prop="province" label="用户名" width="120">
+      <el-table-column prop="openId" label="用户名" width="120">
       </el-table-column>
-      <el-table-column prop="city" label="预约单位" width="120">
+      <el-table-column prop="bookingUnit" label="预约单位" width="120">
       </el-table-column>
-      <el-table-column prop="address" label="预约人" width="120">
+      <el-table-column prop="bookingPerson" label="预约人" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="联系电话" width="120">
+      <el-table-column prop="mobile" label="联系电话" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="参与人数" width="120">
-      </el-table-column>
-
-      <el-table-column prop="zip" label="预约场次" width="120">
+      <el-table-column prop="joinPeople" label="参与人数" width="120">
       </el-table-column>
 
-      <el-table-column prop="zip" label="提交预约时间" width="120">
+      <el-table-column prop="bookingCount" label="预约场次" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="照片" width="120"> </el-table-column>
-      <el-table-column prop="zip" label="状态" width="120"> </el-table-column>
+
+      <el-table-column prop="createTime" label="提交预约时间" width="120">
+      </el-table-column>
+
+      <el-table-column prop="images" label="图片" width="200">
+        <template slot-scope="scope">
+          <div
+            class="moreImg"
+            :class="{ moreImg: scope.row.images.length > 1 }"
+          >
+            <el-image
+              v-for="(item, index) in scope.row.images"
+              :key="index"
+              :src="item.imgeUrl"
+            ></el-image>
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="approvalStatusStr" label="状态" width="120">
+      </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -117,7 +133,6 @@
       </el-dialog>
     </div>
   </div>
-  
 </template>
 
 <script>
@@ -129,40 +144,7 @@ export default {
       form2: {
         name: "123",
       },
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       formInline: {
         name: "",
         region: "",
@@ -170,6 +152,15 @@ export default {
         date2: "",
       },
     };
+  },
+  created() {
+    this.$axios
+      .get(`/activityBooking/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     handleClickTable(row) {
@@ -187,6 +178,22 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.wrap {
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+.moreImg {
+  display: flex;
+  flex-wrap: wrap;
+  .el-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
 .detail-form .el-form-item {
   margin-bottom: 2px;
 }

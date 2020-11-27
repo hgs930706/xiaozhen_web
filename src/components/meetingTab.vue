@@ -47,26 +47,26 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="序号" width="150"> </el-table-column>
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
       <el-table-column prop="name" label="会议室" width="120">
       </el-table-column>
-      <el-table-column prop="province" label="用户名" width="120">
+      <el-table-column prop="openId" label="用户名" width="120">
       </el-table-column>
-      <el-table-column prop="city" label="预约单位" width="120">
+      <el-table-column prop="bookingUnit" label="预约单位" width="120">
       </el-table-column>
-      <el-table-column prop="address" label="预约人" width="120">
+      <el-table-column prop="bookingPerson" label="预约人" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="联系电话" width="120">
+      <el-table-column prop="mobile" label="联系电话" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="参会人数" width="120">
-      </el-table-column>
-
-      <el-table-column prop="zip" label="提交预约时间" width="120">
+      <el-table-column prop="joinPeople" label="参会人数" width="120">
       </el-table-column>
 
-      <el-table-column prop="zip" label="预约会议时间" width="120">
+      <el-table-column prop="createTime" label="提交预约时间" width="120">
       </el-table-column>
-      <el-table-column prop="zip" label="状态" width="120"> </el-table-column>
+
+      <el-table-column prop="bookingStartTime" label="预约会议时间" width="120">
+      </el-table-column>
+      <el-table-column prop="approvalStatus" label="状态" width="120"> </el-table-column>
 
       <el-table-column label="操作" width="150">
         <template slot-scope="scope">
@@ -205,40 +205,7 @@ export default {
       form2: {
         name: "123",
       },
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       formInline: {
         user: "",
         region: "",
@@ -246,6 +213,15 @@ export default {
         date2: "",
       },
     };
+  },
+   created() {
+    this.$axios
+      .get(`/meetingAreaBooking/list?page=1&size=10`)
+      .then(({ data }) => {
+        console.log(JSON.stringify(data));
+        this.tableData = data.data.list;
+      })
+      .catch((error) => {});
   },
   methods: {
     handleClickTable(row) {
