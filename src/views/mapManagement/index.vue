@@ -7,18 +7,13 @@
 -->
 <template>
   <div>
-    <el-form :inline="true" :model="formInline" class="demo-form-inline"> 
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="地图管理"></el-form-item>
-      
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-     <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="name" label="名称">
-      </el-table-column>
-      <el-table-column prop="content" label="跳转地址">
-      </el-table-column>
-
-    
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="name" label="名称"> </el-table-column>
+      <el-table-column prop="content" label="跳转地址"> </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -61,41 +56,8 @@
 export default {
   data() {
     return {
-      dialogFormVisible:false,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      dialogFormVisible: false,
+      tableData: [],
       formInline: {
         user: "",
         region: "",
@@ -116,18 +78,19 @@ export default {
       },
     };
   },
-   created() {
+  created() {
     this.$axios
       .get(`/dict/maps`)
       .then(({ data }) => {
         console.log(JSON.stringify(data));
         this.tableData = data.data;
+        this.total = data.data.total;
       })
       .catch((error) => {});
   },
   methods: {
     handleClickTable(row) {
-      this.dialogFormVisible = true
+      this.dialogFormVisible = true;
       console.log(row);
     },
     handleClick(tab, event) {

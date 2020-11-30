@@ -37,25 +37,21 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-     <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="username" label="用户名" >
-      </el-table-column>
-      <el-table-column prop="realName" label="姓名" >
-      </el-table-column>
-      <el-table-column prop="realName" label="角色" > </el-table-column>
-      <el-table-column prop="username" label="联系电话" >
-      </el-table-column>
-      <el-table-column prop="isStatus" label="状态" > </el-table-column>
-      <el-table-column prop="userImage" label="头像" > 
-         <template slot-scope="scope">
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="username" label="用户名"> </el-table-column>
+      <el-table-column prop="realName" label="姓名"> </el-table-column>
+      <el-table-column prop="realName" label="角色"> </el-table-column>
+      <el-table-column prop="username" label="联系电话"> </el-table-column>
+      <el-table-column prop="isStatus" label="状态"> </el-table-column>
+      <el-table-column prop="userImage" label="头像">
+        <template slot-scope="scope">
           <div class="moreImg">
             <el-image :src="scope.row.userImage"></el-image>
           </div>
         </template>
       </el-table-column>
 
-      <el-table-column prop="createTime" label="创建时间" >
-      </el-table-column>
+      <el-table-column prop="createTime" label="创建时间"> </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -68,15 +64,16 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="block" >
-      <el-pagination
-        style="text-align:right;"
+    <div class="block">
+     <el-pagination
+        style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage3"
-        :page-size="100"
-        layout="prev, pager, next, jumper"
-        :total="1000"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
       >
       </el-pagination>
     </div>
@@ -132,6 +129,9 @@
 export default {
   data() {
     return {
+       page: 1,
+      size: 10,
+      total: 0,  
       currentPage3: 5,
       dialogFormVisible: false,
       tableData: [],
@@ -161,16 +161,31 @@ export default {
       .then(({ data }) => {
         console.log(JSON.stringify(data));
         this.tableData = data.data.list;
+        this.total = data.data.total;
       })
       .catch((error) => {});
   },
   methods: {
+   query() {
+      this.$axios
+        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .then(({ data }) => {
+          this.tableData = data.data.list;
+          this.total = data.data.total;
+        })
+        .catch((error) => {});
+    },
     handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
+      this.size = val;
+      this.page = 1;
+      this.query();
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.page = val;
+      this.query();
+      console.log(`当前页: ${val}`);
+    },
     insert() {
       this.dialogFormVisible = true;
     },

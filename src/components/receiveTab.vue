@@ -10,23 +10,25 @@
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="提交预约时间">
         <el-date-picker
-          type="date"
+          type="datetime"
           placeholder="选择日期"
-          v-model="formInline.date1"
+          v-model="formInline.createTime"
+           value-format="yyyy-MM-dd HH:mm:ss"
           style="width: 100%"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="接待预约时间">
         <el-date-picker
-          type="date"
+          type="datetime"
           placeholder="选择日期"
-          v-model="formInline.date2"
+          v-model="formInline.bookingTime"
+          value-format="yyyy-MM-dd HH:mm:ss"
           style="width: 100%"
         ></el-date-picker>
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select v-model="formInline.region" placeholder="审批状态">
+        <el-select v-model="formInline.approvalStatus" placeholder="审批状态">
           <el-option label="全部" value=""></el-option>
           <el-option label="待审批" value="0"></el-option>
           <el-option label="同意" value="1"></el-option>
@@ -34,7 +36,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">导出</el-button>
@@ -42,25 +44,20 @@
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="openId" label="用户名" >
+      <el-table-column prop="openId" label="用户名"> </el-table-column>
+      <el-table-column prop="bookingCompany" label="预约单位">
       </el-table-column>
-      <el-table-column prop="bookingCompany" label="预约单位" >
+      <el-table-column prop="bookingName" label="预约人"> </el-table-column>
+      <el-table-column prop="mobile" label="联系电话"> </el-table-column>
+      <el-table-column prop="createTime" label="预约提交时间">
       </el-table-column>
-      <el-table-column prop="bookingName" label="预约人" >
-      </el-table-column>
-      <el-table-column prop="mobile" label="联系电话" >
-      </el-table-column>
-      <el-table-column prop="createTime" label="预约提交时间" >
-      </el-table-column>
-      <el-table-column prop="bookingTime" label="预约接待时间" >
+      <el-table-column prop="bookingTime" label="预约接待时间">
       </el-table-column>
 
-      <el-table-column prop="visitCount" label="参观人数" >
-      </el-table-column>
+      <el-table-column prop="visitCount" label="参观人数"> </el-table-column>
 
-      <el-table-column prop="visitType" label="参观方式" >
-      </el-table-column>
-       <el-table-column prop="images" label="图片" width="200">
+      <el-table-column prop="visitType" label="参观方式"> </el-table-column>
+      <el-table-column prop="images" label="图片" width="200">
         <template slot-scope="scope">
           <div class="wrap" :class="{ moreImg: scope.row.images.length > 1 }">
             <el-image
@@ -71,8 +68,8 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="remark" label="备注" > </el-table-column>
-      <el-table-column prop="approvalStatusStr" label="状态" > </el-table-column>
+      <el-table-column prop="remark" label="备注"> </el-table-column>
+      <el-table-column prop="approvalStatusStr" label="状态"> </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -86,15 +83,16 @@
         </template>
       </el-table-column>
     </el-table>
-<div class="block" >
-      <el-pagination
-        style="text-align:right;"
+    <div class="block">
+     <el-pagination
+        style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage3"
-        :page-size="100"
-        layout="prev, pager, next, jumper"
-        :total="1000"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
       >
       </el-pagination>
     </div>
@@ -151,6 +149,9 @@
 export default {
   data() {
     return {
+       page: 1,
+      size: 10,
+      total: 0,  
       currentPage3: 5,
       formLabelWidth: "120px",
       dialogFormVisible: false,
@@ -170,10 +171,9 @@ export default {
 
       tableData: [],
       formInline: {
-        user: "",
-        region: "",
-        date1: "",
-        date2: "",
+        bookingTime: "",
+        createTime: "",
+        approvalStatus: ""
       },
     };
   },
@@ -183,16 +183,31 @@ export default {
       .then(({ data }) => {
         console.log(JSON.stringify(data));
         this.tableData = data.data.list;
+        this.total = data.data.total;
       })
       .catch((error) => {});
   },
   methods: {
+    query() {
+      this.$axios
+        .get(`/receiveBooking/list?page=${this.page}&size=${this.size}&bookingTime=${this.formInline.bookingTime}&createTime=${this.formInline.createTime}&approvalStatus=${this.formInline.approvalStatus}`)
+        .then(({ data }) => {
+          this.tableData = data.data.list;
+          this.total = data.data.total;
+        })
+        .catch((error) => {});
+    },
     handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
+      this.size = val;
+      this.page = 1;
+      this.query();
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.page = val;
+      this.query();
+      console.log(`当前页: ${val}`);
+    },
     handleClickTable(row) {
       this.dialogFormVisible = true;
       console.log(row);

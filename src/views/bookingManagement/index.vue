@@ -8,14 +8,14 @@
 <template>
   <div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="接待预约" name="first">        
+      <el-tab-pane label="接待预约" name="first">
         <receive-tab></receive-tab>
       </el-tab-pane>
       <el-tab-pane label="活动报名" name="second">
-        <activicty-tab></activicty-tab> 
+        <activicty-tab></activicty-tab>
       </el-tab-pane>
       <el-tab-pane label="会议场地预约" name="third">
-        <meeting-tab></meeting-tab> 
+        <meeting-tab></meeting-tab>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -27,20 +27,20 @@ import activictyTab from "../../components/activictyTab.vue";
 import meetingTab from "../../components/meetingTab.vue";
 export default {
   data() {
-    return {     
-      activeName: "first",      
+    return {
+      activeName: "first",
     };
   },
   components: {
     //自定义组件
     receiveTab,
     activictyTab,
-    meetingTab
+    meetingTab,
   },
   methods: {
     handleClick(tab, event) {
-        console.log(tab, event);
-      }
+      console.log(tab, event);
+    },
   },
 };
 </script>

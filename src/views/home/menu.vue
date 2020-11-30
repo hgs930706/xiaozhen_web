@@ -16,7 +16,7 @@
           :collapse="isCollapse"
           :router="true"
         >
-         <el-menu-item index="/home/page">
+          <el-menu-item index="/home/page">
             <i class="el-icon-s-home"></i>
             <span slot="title">首页</span>
           </el-menu-item>
@@ -25,7 +25,7 @@
             <i class="el-icon-time"></i>
             <span slot="title">预约报名管理</span>
           </el-menu-item>
-           <!-- <el-menu-item index="/home/business">
+          <!-- <el-menu-item index="/home/business">
             <i class="el-icon-tickets"></i>
             <span slot="title">业务管理</span>
           </el-menu-item> -->
@@ -35,9 +35,11 @@
               <span slot="title">业务管理</span>
             </template>
             <el-menu-item index="/home/business/meeting">场地管理</el-menu-item>
-            <el-menu-item index="/home/business/activity">活动管理</el-menu-item>
+            <el-menu-item index="/home/business/activity"
+              >活动管理</el-menu-item
+            >
           </el-submenu>
-         
+
           <!-- <el-menu-item index="/home/message">
             <i class="el-icon-chat-line-square"></i>
             <span slot="title">消息管理</span>
@@ -49,7 +51,7 @@
             </template>
             <el-menu-item index="/home/message/action">消息日志</el-menu-item>
             <el-menu-item index="/home/message/temp">消息模板</el-menu-item>
-             <el-menu-item index="/home/message/feedback">意见反馈</el-menu-item>
+            <el-menu-item index="/home/message/feedback">意见反馈</el-menu-item>
           </el-submenu>
           <el-menu-item index="/home/qiye">
             <i class="el-icon-office-building"></i>

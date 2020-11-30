@@ -7,18 +7,12 @@
 -->
 
 <template>
-  <div id = "messageManagement">
-     消息管理
-  </div>
-
+  <div id="messageManagement">消息管理</div>
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
 <style lang="less" scoped>
-
 </style>

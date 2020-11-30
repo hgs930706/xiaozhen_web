@@ -29,25 +29,24 @@
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="meetingName" label="会议室" >
+      <el-table-column prop="meetingName" label="会议室"> </el-table-column>
+      <el-table-column prop="meetingAddress" label="会议室地址">
       </el-table-column>
-      <el-table-column prop="meetingAddress" label="会议室地址" >
+      <el-table-column prop="meetingDateil" label="会议室简介">
       </el-table-column>
-      <el-table-column prop="meetingDateil" label="会议室简介" >
+      <el-table-column prop="meetingCapacity" label="可容纳人数">
       </el-table-column>
-      <el-table-column prop="meetingCapacity" label="可容纳人数" >
-      </el-table-column>     
       <el-table-column prop="meetingImage" label="图片" width="200">
         <template slot-scope="scope">
           <div class="moreImg">
             <el-image :src="scope.row.meetingImage"></el-image>
           </div>
         </template>
-         </el-table-column>
-      <el-table-column prop="meetingRemark" label="会议室备注" >
+      </el-table-column>
+      <el-table-column prop="meetingRemark" label="会议室备注">
       </el-table-column>
 
-      <el-table-column prop="isStatus" label="状态" > </el-table-column>
+      <el-table-column prop="isStatus" label="状态"> </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -62,14 +61,15 @@
       </el-table-column>
     </el-table>
     <div class="block">
-      <el-pagination
-       style="text-align:right;"
+     <el-pagination
+        style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage3"
-        :page-size="100"
-        layout="prev, pager, next, jumper"
-        :total="1000"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
       >
       </el-pagination>
     </div>
@@ -152,31 +152,31 @@
     <div class="detail-form">
       <el-dialog title="场地详情" :visible.sync="dialogFormVisibleDetail">
         <el-form :model="form2" label-width="120px">
-          <el-form-item label="序号：" >
+          <el-form-item label="序号：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
           <el-form-item label="会议室名称：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
-          <el-form-item label="会议室地址：" >
+          <el-form-item label="会议室地址：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
-          <el-form-item label="会议室简介：" >
+          <el-form-item label="会议室简介：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
-          <el-form-item label="可容纳人数：" >
+          <el-form-item label="可容纳人数：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
-          <el-form-item label="备注：" >
+          <el-form-item label="备注：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
           <el-form-item label="可用会议类型：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
-          <el-form-item label="会议室桌型：" >
+          <el-form-item label="会议室桌型：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
-          <el-form-item label="会议物品：" >
+          <el-form-item label="会议物品：">
             <labe>{{ form2.name }}</labe>
           </el-form-item>
           <el-form-item label="图片：">
@@ -199,6 +199,9 @@ export default {
       imageUrl: "",
       dialogFormVisible: false,
       dialogFormVisibleDetail: false,
+       page: 1,
+      size: 10,
+      total: 0,  
       currentPage3: 5,
       tableData: [],
       formInline: {
@@ -230,14 +233,29 @@ export default {
       .then(({ data }) => {
         console.log(JSON.stringify(data));
         this.tableData = data.data.list;
+        this.total = data.data.total;
       })
       .catch((error) => {});
   },
   methods: {
+   query() {
+      this.$axios
+        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .then(({ data }) => {
+          this.tableData = data.data.list;
+          this.total = data.data.total;
+        })
+        .catch((error) => {});
+    },
     handleSizeChange(val) {
+      this.size = val;
+      this.page = 1;
+      this.query();
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
+      this.page = val;
+      this.query();
       console.log(`当前页: ${val}`);
     },
     handleClickTable(row) {
@@ -253,6 +271,8 @@ export default {
     },
     beforeAvatarUpload(file) {
       this.formData.append("file", file);
+      this.formData.append("file", file2);
+      this.formData.append("file", file3);
       // const isJPG = file.type === "image/jpeg";
       // const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -269,7 +289,12 @@ export default {
     },
     onSubmit() {
       console.log("submit!");
-      this.formData.append("meetingName", "第一个会议场地");
+      this.formData.append("file", file);
+      this.formData.append("meetingName", "第-个会议场地");
+      this.formData.append("属性1", "第一个会议场地");
+      this.formData.append("属性2", "第2个会议场地");
+      this.formData.append("属性3", "第3个会议场地");
+      this.formData.append("属性4", "第4个会议场地");
       let requestConfig = {
         headers: {
           "Content-Type": "multipart/form-data",

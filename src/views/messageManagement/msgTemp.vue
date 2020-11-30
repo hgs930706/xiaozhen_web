@@ -30,12 +30,10 @@
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column type="index" width="50" label="序号"></el-table-column>
-        <el-table-column prop="templateName" label="模板名称" >
+        <el-table-column prop="templateName" label="模板名称">
         </el-table-column>
-        <el-table-column prop="templateId" label="模板ID" >
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" >
-        </el-table-column>
+        <el-table-column prop="templateId" label="模板ID"> </el-table-column>
+        <el-table-column prop="createTime" label="创建时间"> </el-table-column>
 
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -49,15 +47,16 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="block" >
-      <el-pagination
-        style="text-align:right;"
+    <div class="block">
+     <el-pagination
+        style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage3"
-        :page-size="100"
-        layout="prev, pager, next, jumper"
-        :total="1000"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
       >
       </el-pagination>
     </div>
@@ -91,6 +90,9 @@
 export default {
   data() {
     return {
+       page: 1,
+      size: 10,
+      total: 0,  
       currentPage3: 5,
       dialogFormVisible: false,
       form: {
@@ -114,22 +116,37 @@ export default {
       },
     };
   },
-   created() {
+  created() {
     this.$axios
       .get(`/template/list?page=1&size=10`)
       .then(({ data }) => {
         console.log(JSON.stringify(data));
         this.tableData = data.data.list;
+        this.total = data.data.total;
       })
       .catch((error) => {});
   },
   methods: {
+   query() {
+      this.$axios
+        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .then(({ data }) => {
+          this.tableData = data.data.list;
+          this.total = data.data.total;
+        })
+        .catch((error) => {});
+    },
     handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
+      this.size = val;
+      this.page = 1;
+      this.query();
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.page = val;
+      this.query();
+      console.log(`当前页: ${val}`);
+    },
     insert() {
       this.dialogFormVisible = true;
     },
