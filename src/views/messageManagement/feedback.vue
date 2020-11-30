@@ -11,14 +11,15 @@
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="时间">
           <el-date-picker
-            type="date"
+            type="datetime"
             placeholder="选择日期"
-            v-model="formInline.date1"
+            v-model="formInline.createTime"
+             value-format="yyyy-MM-dd HH:mm:ss"
             style="width: 100%"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="用户名">
-          <el-input v-model="formInline.name"></el-input>
+          <el-input v-model="formInline.nickname"></el-input>
         </el-form-item>
 
         <el-form-item>
@@ -62,10 +63,8 @@ export default {
       test: [1, 2, 3],
       tableData: [],
       formInline: {
-        user: "",
-        region: "",
-        date1: "",
-        date2: "",
+        nickname: "",
+        createTime: ""
       },
     };
   },
@@ -82,7 +81,7 @@ export default {
   methods: {
    query() {
       this.$axios
-        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .get(`/feedback/list?page=${this.page}&size=${this.size}&nickname=${this.formInline.nickname}&createTime=${this.formInline.createTime}`)
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;

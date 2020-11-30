@@ -9,19 +9,20 @@
   <div>
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="街区">
-        <el-select v-model="formInline.region" placeholder="审批状态">
+        <el-select v-model="formInline.streetType" placeholder="审批状态">
           <el-option label="全部" value=""></el-option>
-          <el-option label="待审批" value="0"></el-option>
-          <el-option label="同意" value="1"></el-option>
-          <el-option label="拒绝" value="2"></el-option>
+          <el-option label="时尚文化街区" value="1"></el-option>
+          <el-option label="时尚艺术街区" value="2"></el-option>
+          <el-option label="时尚历史街区" value="3"></el-option>
+          <el-option label="瑞丽轻奢街区" value="4"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="企业名称">
-        <el-input v-model="formInline.name"></el-input>
+        <el-input v-model="formInline.enterpriseName"></el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">导出</el-button>
@@ -159,10 +160,8 @@ export default {
         desc: "",
       },
       formInline: {
-        user: "",
-        region: "",
-        date1: "",
-        date2: "",
+        enterpriseName: "",
+        streetType: ""
       },
     };
   },
@@ -179,7 +178,7 @@ export default {
   methods: {
    query() {
       this.$axios
-        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .get(`/enterpriseInfo/list?page=${this.page}&size=${this.size}&enterpriseName=${this.formInline.enterpriseName}&streetType=${this.formInline.streetType}`)
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;

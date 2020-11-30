@@ -10,19 +10,20 @@
     <div>
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="模板名称">
-          <el-input v-model="formInline.name"></el-input>
+          <el-input v-model="formInline.templateName"></el-input>
         </el-form-item>
         <el-form-item label="创建时间">
           <el-date-picker
-            type="date"
+            type="datetime"
             placeholder="选择日期"
-            v-model="formInline.date1"
+            v-model="formInline.createTime"
+             value-format="yyyy-MM-dd HH:mm:ss"
             style="width: 100%"
           ></el-date-picker>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="query">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="insert">新建</el-button>
@@ -108,10 +109,8 @@ export default {
       },
       tableData: [],
       formInline: {
-        user: "",
-        region: "",
-        date1: "",
-        date2: "",
+        templateName: "",
+        createTime: ""
       },
     };
   },
@@ -128,7 +127,7 @@ export default {
   methods: {
    query() {
       this.$axios
-        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .get(`/template/list?page=${this.page}&size=${this.size}&templateName=${this.formInline.templateName}&createTime=${this.formInline.createTime}`)
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;

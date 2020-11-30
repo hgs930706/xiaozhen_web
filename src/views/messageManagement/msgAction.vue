@@ -10,25 +10,35 @@
     <div>
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="消息类型">
-          <el-select v-model="formInline.region" placeholder="审批状态">
+          <el-select v-model="formInline.msgType" placeholder="消息类型">
             <el-option label="全部" value=""></el-option>
-            <el-option label="待审批" value="0"></el-option>
-            <el-option label="同意" value="1"></el-option>
-            <el-option label="拒绝" value="2"></el-option>
+             <el-option label="活动消息" value="1"></el-option>
+            <el-option label="接待预约消息" value="2"></el-option>
+            <el-option label="会议场地预约消息" value="3"></el-option>
+           
           </el-select>
         </el-form-item>
 
         <el-form-item label="状态">
-          <el-select v-model="formInline.region" placeholder="审批状态">
+          <el-select v-model="formInline.sendStatus" placeholder="审批状态">
             <el-option label="全部" value=""></el-option>
-            <el-option label="待审批" value="0"></el-option>
-            <el-option label="同意" value="1"></el-option>
-            <el-option label="拒绝" value="2"></el-option>
+            <el-option label="失败" value="0"></el-option>
+            <el-option label="成功" value="1"></el-option>
           </el-select>
         </el-form-item>
 
+        <el-form-item label="发送时间">
+        <el-date-picker
+          type="datetime"
+          placeholder="选择日期"
+          v-model="formInline.createTime"
+           value-format="yyyy-MM-dd HH:mm:ss"
+          style="width: 100%"
+        ></el-date-picker>
+      </el-form-item>
+
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="query">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">导出</el-button>
@@ -48,19 +58,7 @@
         </el-table-column>
 
         <el-table-column prop="sendStatus" label="发送状态"> </el-table-column>
-
-        <el-table-column label="操作" width="150">
-          <template slot-scope="scope">
-            <el-button
-              @click="handleClickTable(scope.row)"
-              type="text"
-              size="small"
-              >详情</el-button
-            >
-            <el-button type="text" size="small">添加场次</el-button>
-            <el-button type="text" size="small">编辑</el-button>
-          </template>
-        </el-table-column>
+     
       </el-table>
     </div>
     <div class="block">
@@ -88,10 +86,9 @@ export default {
       total: 0,
       tableData: [],
       formInline: {
-        user: "",
-        region: "",
-        date1: "",
-        date2: "",
+        createTime: "",
+        sendStatus: "",
+        msgType: ""
       },
     };
   },
@@ -108,7 +105,15 @@ export default {
   methods: {
     query() {
       this.$axios
-        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .get(`/msgAction/list`,{
+          params: {
+            page:this.page,
+            size:this.size,
+            createTime: this.formInline.createTime,
+            sendStatus: this.formInline.sendStatus,
+            msgType: this.formInline.msgType
+          },
+        })
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;

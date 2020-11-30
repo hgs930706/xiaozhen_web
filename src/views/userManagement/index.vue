@@ -9,10 +9,10 @@
   <div>
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="用户名">
-        <el-input v-model="formInline.name"></el-input>
+        <el-input v-model="formInline.username"></el-input>
       </el-form-item>
       <el-form-item label="角色">
-        <el-select v-model="formInline.region" placeholder="审批状态">
+        <el-select v-model="formInline.role" placeholder="审批状态">
           <el-option label="全部" value=""></el-option>
           <el-option label="待审批" value="0"></el-option>
           <el-option label="同意" value="1"></el-option>
@@ -20,16 +20,15 @@
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="formInline.region" placeholder="审批状态">
-          <el-option label="全部" value=""></el-option>
-          <el-option label="待审批" value="0"></el-option>
-          <el-option label="同意" value="1"></el-option>
-          <el-option label="拒绝" value="2"></el-option>
+        <el-select v-model="formInline.isStatus" placeholder="审批状态">
+            <el-option label="全部" value=""></el-option>
+            <el-option label="正常" value="1"></el-option>
+            <el-option label="停用" value="0"></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
 
       <el-form-item>
@@ -135,10 +134,9 @@ export default {
       dialogFormVisible: false,
       tableData: [],
       formInline: {
-        user: "",
-        region: "",
-        date1: "",
-        date2: "",
+        username: "",
+        role: "",
+        isStatus: ""
       },
       form: {
         name: "",
@@ -167,7 +165,15 @@ export default {
   methods: {
    query() {
       this.$axios
-        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .get(`/adminUser/list`,{
+          params: {
+            page:this.page,
+            size:this.size,
+            username: this.formInline.username,
+            role: this.formInline.role,
+            isStatus: this.formInline.isStatus
+          },
+        })
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
