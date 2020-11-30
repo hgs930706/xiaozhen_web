@@ -67,18 +67,17 @@
       <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <el-button
-            @click="handleClickTable(scope.row)"
-            type="text"
-            size="small"
-            >详情</el-button
-          >
-          <el-button
-            @click="handleClickTable(scope.row)"
+            @click="handleClickTable(scope.row, false)"
             type="text"
             size="small"
             >同意</el-button
           >
-          <el-button type="text" size="small">拒绝</el-button>
+          <el-button
+            @click="handleClickTable(scope.row, true)"
+            type="text"
+            size="small"
+            >拒绝</el-button
+          >       
         </template>
       </el-table-column>
     </el-table>
@@ -98,56 +97,60 @@
 
     <div class="detail-form">
       <el-dialog title="同意预约申请" :visible.sync="dialogFormVisible">
-        <el-form :model="form2">
-          <el-form-item label="序号：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
-          </el-form-item>
+        <el-form :model="detail">        
           <el-form-item label="用户名：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.openId }}</labe>
           </el-form-item>
           <el-form-item label="预约单位：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingUnit }}</labe>
           </el-form-item>
           <el-form-item label="预约人：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingPerson }}</labe>
           </el-form-item>
           <el-form-item label="联系电话：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.mobile }}</labe>
           </el-form-item>
           <el-form-item label="参会人数：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.joinPeople }}</labe>
           </el-form-item>
           <el-form-item label="预约会议时间：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingStartTime }}--{{ detail.bookingEndTime }}</labe>
           </el-form-item>
           <el-form-item label="提交预约时间：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.createTime }}</labe>
           </el-form-item>
           <el-form-item label="会议室名称：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.meetingName }}</labe>
           </el-form-item>
           <el-form-item label="会议室地址：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.meetingAddress }}</labe>
           </el-form-item>
           <el-form-item label="会议室类型：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.meetingType }}</labe>
           </el-form-item>
           <el-form-item label="会议室桌型需求：" :label-width="150">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.meetingTable }}</labe>
           </el-form-item>
           <el-form-item label="会议室物品需求：" :label-width="150">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.meetingGoods }}</labe>
           </el-form-item>
           <el-form-item label="备注：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.remark }}</labe>
+          </el-form-item>
+           <el-form-item v-if="status" label="拒绝原因：" :label-width="formLabelWidth" >
+            <el-input
+              type="textarea"
+              :rows="2"
+              placeholder="请输入内容"
+              v-model="reason"
+            >
+            </el-input>
           </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+           <el-button type="primary" @click="onSubmit()">{{status ? "拒绝" : "确 定"}}</el-button>
         </div>
       </el-dialog>
     </div>
@@ -223,6 +226,24 @@ export default {
         bookingEndTime: "",
         approvalStatus: "",
       },
+      status: false,
+      reason: "",
+      detail: {
+        id: "",
+        openId: "",
+        bookingUnit: "",
+        bookingPerson: "",
+        mobile: "",
+        joinPeople: "",
+        bookingStartTime: "",
+        bookingEndTime: "",
+        meetingTable: "",
+        meetingType: "",
+        meetingGoods:'',
+        remark:'',
+        meetingName:'',
+        meetingAddress:'',
+      }
     };
   },
   created() {
@@ -265,16 +286,54 @@ export default {
       this.query();
       console.log(`当前页: ${val}`);
     },
-    handleClickTable(row) {
-      // this.dialogFormVisible = true
-      this.dialogFormVisibleDetail = true;
+    handleClickTable(row,status) {     
+      this.status = status;
+      this.dialogFormVisible = true;
+      this.$axios
+        .get(`/meetingAreaBooking/detail?id=` + row.id)
+        .then(({ data }) => {
+          let obj = data.data;         
+          this.detail= {
+            id: row.id,
+            openId: obj.openId,
+            bookingUnit: obj.bookingUnit,
+            bookingPerson: obj.bookingPerson,
+            mobile: obj.mobile,
+            joinPeople: obj.joinPeople,
+            bookingStartTime: obj.bookingStartTime,
+            bookingEndTime: obj.bookingEndTime,
+            meetingTable: obj.meetingTable,
+            meetingType: obj.meetingType,
+            meetingGoods:obj.meetingGoods,
+            remark:obj.remark,
+            meetingName:obj.meetingName,
+            meetingAddress:obj.meetingAddress,
+          }         
+        });   
       console.log(row);
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
     onSubmit() {
-      console.log("submit!");
+       this.dialogFormVisible = false;
+      //拒绝
+      this.$axios
+        .post(`/meetingAreaBooking/approval`, {
+          id: this.detail.id,
+          approvalRemark: this.reason,
+          approvalStatus: this.status ? 2 : 1,
+        })
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+          }else{
+            this.$message.error(data.message);
+          }
+        });
     },
   },
 };

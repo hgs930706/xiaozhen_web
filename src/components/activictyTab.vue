@@ -54,12 +54,11 @@
         <template slot-scope="scope">
           <div
             class="moreImg"
-            :class="{ moreImg: scope.row.images.length > 1 }"
           >
             <el-image
               v-for="(item, index) in scope.row.images"
               :key="index"
-              :src="item.imgeUrl"
+              :src="item.imageUrl"
             ></el-image>
           </div>
         </template>
@@ -68,14 +67,19 @@
       <el-table-column prop="approvalStatusStr" label="状态"> </el-table-column>
 
       <el-table-column label="操作" width="100">
-        <template slot-scope="scope">
+         <template slot-scope="scope">
           <el-button
-            @click="handleClickTable(scope.row)"
+            @click="handleClickTable(scope.row, false)"
             type="text"
             size="small"
             >同意</el-button
           >
-          <el-button type="text" size="small">拒绝</el-button>
+          <el-button
+            @click="handleClickTable(scope.row, true)"
+            type="text"
+            size="small"
+            >拒绝</el-button
+          >       
         </template>
       </el-table-column>
     </el-table>
@@ -94,47 +98,59 @@
     </div>
     <div class="detail-form">
       <el-dialog title="同意报名申请" :visible.sync="dialogFormVisible">
-        <el-form :model="form2">
-          <el-form-item label="序号：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
-          </el-form-item>
+        <el-form :model="detail">        
           <el-form-item label="活动名称：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.activityName }}</labe>
           </el-form-item>
           <el-form-item label="用户名：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.openId }}</labe>
           </el-form-item>
           <el-form-item label="预约单位：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingUnit}}</labe>
           </el-form-item>
           <el-form-item label="预约人：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingPerson }}</labe>
           </el-form-item>
           <el-form-item label="联系电话：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.mobile }}</labe>
           </el-form-item>
           <el-form-item label="参加人数：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.joinPeople }}</labe>
           </el-form-item>
           <el-form-item label="预约场次：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingCount }}</labe>
           </el-form-item>
           <el-form-item label="活动时间：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.activityStartTime }}--{{detail.activityEndTime }}</labe>
           </el-form-item>
           <el-form-item label="提交预约时间：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.createTime }}</labe>
           </el-form-item>
-          <el-form-item label="图片：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+          <el-form-item label="图片：" :label-width="formLabelWidth">           
+             <labe>
+              <div class="moreImg">
+                <el-image
+                  v-for="(item, index) in detail.images"
+                  :key="index"
+                  :src="item.imageUrl"
+                ></el-image>
+              </div>
+            </labe>
           </el-form-item>
-        </el-form>
+           <el-form-item v-if="status" label="拒绝原因：" :label-width="formLabelWidth" >
+            <el-input
+              type="textarea"
+              :rows="2"
+              placeholder="请输入内容"
+              v-model="reason"
+            >
+            </el-input>
+          </el-form-item>
+        </el-form>       
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+           <el-button type="primary" @click="onSubmit()">{{status ? "拒绝" : "确 定"}}</el-button>
         </div>
       </el-dialog>
     </div>
@@ -159,6 +175,22 @@ export default {
         createTime:'',
         approvalStatus: '',
       },
+      status: false,
+      reason: "",
+      detail: {
+        id: "",
+        activityName: "",
+        openId: "",
+        bookingUnit: "",
+        bookingPerson: "",
+        mobile: "",
+        joinPeople: "",
+        bookingCount: "",
+        createTime: "",
+        images: [],
+        activityStartTime:'',
+        activityEndTime:''
+      }
     };
   },
   created() {
@@ -167,8 +199,7 @@ export default {
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
-        })
-        .catch((error) => {});
+        });
   },
   methods: {
     query() {
@@ -177,8 +208,7 @@ export default {
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
-        })
-        .catch((error) => {});
+        });
     },
     handleSizeChange(val) {
       this.size = val;
@@ -191,15 +221,53 @@ export default {
       this.query();
       console.log(`当前页: ${val}`);
     },
-    handleClickTable(row) {
+    handleClickTable(row,status) {     
+      this.status = status;
+      alert(status);
       this.dialogFormVisible = true;
+      this.$axios
+        .get(`/activityBooking/detail?id=` + row.id)
+        .then(({ data }) => {
+          let obj = data.data;
+          this.detail={
+            id: row.id,
+            activityName:obj.activityName,
+            openId: obj.openId,
+            bookingUnit: obj.bookingUnit,
+            bookingPerson: obj.bookingPerson,
+            mobile: obj.mobile,
+            joinPeople: obj.joinPeople,
+            bookingCount: obj.bookingCount,
+            createTime: obj.createTime,
+            images:obj.images,
+            activityStartTime:obj.activityStartTime,
+            activityEndTime:obj.activityEndTime
+          }          
+        });   
       console.log(row);
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
     onSubmit() {
-      console.log("submit!");
+      this.dialogFormVisible = false;
+      //拒绝
+      this.$axios
+        .post(`/activityBooking/approval`, {
+          id: this.detail.id,
+          approvalRemark: this.reason,
+          approvalStatus: this.status ? 2 : 1,
+        })
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+          }else{
+            this.$message.error(data.message);
+          }
+        });
     },
   },
 };

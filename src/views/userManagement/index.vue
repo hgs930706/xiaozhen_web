@@ -39,8 +39,7 @@
       <el-table-column type="index" width="50" label="序号"></el-table-column>
       <el-table-column prop="username" label="用户名"> </el-table-column>
       <el-table-column prop="realName" label="姓名"> </el-table-column>
-      <el-table-column prop="realName" label="角色"> </el-table-column>
-      <el-table-column prop="username" label="联系电话"> </el-table-column>
+      <el-table-column prop="roles" label="角色"> </el-table-column>
       <el-table-column prop="isStatus" label="状态"> </el-table-column>
       <el-table-column prop="userImage" label="头像">
         <template slot-scope="scope">
@@ -128,6 +127,7 @@
 export default {
   data() {
     return {
+      imageUrl:'',
        page: 1,
       size: 10,
       total: 0,

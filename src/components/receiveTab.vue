@@ -13,7 +13,7 @@
           type="datetime"
           placeholder="选择日期"
           v-model="formInline.createTime"
-           value-format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd HH:mm:ss"
           style="width: 100%"
         ></el-date-picker>
       </el-form-item>
@@ -59,11 +59,11 @@
       <el-table-column prop="visitType" label="参观方式"> </el-table-column>
       <el-table-column prop="images" label="图片" width="200">
         <template slot-scope="scope">
-          <div class="wrap" :class="{ moreImg: scope.row.images.length > 1 }">
+          <div class="moreImg">
             <el-image
               v-for="(item, index) in scope.row.images"
               :key="index"
-              :src="item.imgeUrl"
+              :src="item.imageUrl"
             ></el-image>
           </div>
         </template>
@@ -74,17 +74,22 @@
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button
-            @click="handleClickTable(scope.row)"
+            @click="handleClickTable(scope.row, false)"
             type="text"
             size="small"
             >同意</el-button
           >
-          <el-button type="text" size="small">拒绝</el-button>
+          <el-button
+            @click="handleClickTable(scope.row, true)"
+            type="text"
+            size="small"
+            >拒绝</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
     <div class="block">
-     <el-pagination
+      <el-pagination
         style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -98,47 +103,63 @@
     </div>
     <div class="detail-form">
       <el-dialog title="同意预约申请" :visible.sync="dialogFormVisible">
-        <el-form :model="form2">
-          <el-form-item label="序号：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
-          </el-form-item>
+        <el-form :model="detail">
           <el-form-item label="用户名：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.openId }}</labe>
           </el-form-item>
           <el-form-item label="预约单位：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingCompany }}</labe>
           </el-form-item>
           <el-form-item label="预约人：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingName }}</labe>
           </el-form-item>
           <el-form-item label="联系电话：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.mobile }}</labe>
           </el-form-item>
           <el-form-item label="参观人数：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.visitCount }}</labe>
           </el-form-item>
           <el-form-item label="参观方式：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.visitType }}</labe>
           </el-form-item>
           <el-form-item label="预约时间：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.bookingTime }}</labe>
           </el-form-item>
           <el-form-item label="提交预约时间：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.createTime }}</labe>
           </el-form-item>
           <el-form-item label="图片：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>
+              <div class="moreImg">
+                <el-image
+                  v-for="(item, index) in detail.images"
+                  :key="index"
+                  :src="item.imageUrl"
+                ></el-image>
+              </div>
+            </labe>
           </el-form-item>
           <el-form-item label="备注：" :label-width="formLabelWidth">
-            <labe>{{ form2.name }}</labe>
+            <labe>{{ detail.remark }}</labe>
+          </el-form-item>
+          <el-form-item
+            v-if="status"
+            label="拒绝原因："
+            :label-width="formLabelWidth"
+          >
+            <el-input
+              type="textarea"
+              :rows="2"
+              placeholder="请输入内容"
+              v-model="reason"
+            >
+            </el-input>
           </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+          <el-button type="primary" @click="onSubmit()">{{status ? "拒绝" : "确 定"}}</el-button>
         </div>
       </el-dialog>
     </div>
@@ -149,7 +170,7 @@
 export default {
   data() {
     return {
-       page: 1,
+      page: 1,
       size: 10,
       total: 0,
       formLabelWidth: "120px",
@@ -167,13 +188,27 @@ export default {
         resource: "",
         desc: "",
       },
-
       tableData: [],
       formInline: {
         bookingTime: "",
         createTime: "",
-        approvalStatus: ""
+        approvalStatus: "",
       },
+      detail: {
+        id: "",
+        openId: "",
+        bookingCompany: "",
+        bookingName: "",
+        mobile: "",
+        visitCount: "",
+        visitType: "",
+        bookingTime: "",
+        createTime: "",
+        remark: "",
+        images: [],
+      },
+      status: false,
+      reason: "",
     };
   },
   created() {
@@ -189,7 +224,9 @@ export default {
   methods: {
     query() {
       this.$axios
-        .get(`/receiveBooking/list?page=${this.page}&size=${this.size}&bookingTime=${this.formInline.bookingTime}&createTime=${this.formInline.createTime}&approvalStatus=${this.formInline.approvalStatus}`)
+        .get(
+          `/receiveBooking/list?page=${this.page}&size=${this.size}&bookingTime=${this.formInline.bookingTime}&createTime=${this.formInline.createTime}&approvalStatus=${this.formInline.approvalStatus}`
+        )
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
@@ -207,15 +244,51 @@ export default {
       this.query();
       console.log(`当前页: ${val}`);
     },
-    handleClickTable(row) {
+    handleClickTable(row, status) {
+      this.status = status;
       this.dialogFormVisible = true;
-      console.log(row);
+      this.$axios
+        .get(`/receiveBooking/detail?id=` + row.id)
+        .then(({ data }) => {
+          let obj = data.data;
+          this.detail = {
+            id: row.id,
+            openId: obj.openId,
+            bookingCompany: obj.bookingCompany,
+            bookingName: obj.bookingName,
+            mobile: obj.mobile,
+            visitCount: obj.visitCount,
+            visitType: obj.visitType,
+            bookingTime: obj.bookingTime,
+            createTime: obj.createTime,
+            remark: obj.remark,
+            images: obj.images,
+          };
+        })
+        .catch((error) => {});    
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
     onSubmit() {
-      console.log("submit!");
+      this.dialogFormVisible = false;
+      //拒绝
+      this.$axios
+        .post(`/receiveBooking/approval`, {
+          id: this.detail.id,
+          approvalRemark: this.reason,
+          approvalStatus: this.status ? 2 : 1,
+        })
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+          }else{
+            this.$message.error(data.message);
+          }
+        });
     },
   },
 };
