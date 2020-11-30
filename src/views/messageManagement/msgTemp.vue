@@ -92,8 +92,7 @@ export default {
     return {
        page: 1,
       size: 10,
-      total: 0,  
-      currentPage3: 5,
+      total: 0,
       dialogFormVisible: false,
       form: {
         name: "",

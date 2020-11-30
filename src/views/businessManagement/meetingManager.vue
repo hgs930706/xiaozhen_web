@@ -9,19 +9,18 @@
   <div>
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="会议场地名称">
-        <el-input v-model="formInline.name"></el-input>
+        <el-input v-model="formInline.meetingName"></el-input>
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select v-model="formInline.region" placeholder="审批状态">
+        <el-select v-model="formInline.isStatus" placeholder="审批状态">
           <el-option label="全部" value=""></el-option>
-          <el-option label="待审批" value="0"></el-option>
-          <el-option label="同意" value="1"></el-option>
-          <el-option label="拒绝" value="2"></el-option>
+          <el-option label="正常" value="1"></el-option>
+          <el-option label="停用" value="2"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="insert">新建</el-button>
@@ -201,14 +200,11 @@ export default {
       dialogFormVisibleDetail: false,
        page: 1,
       size: 10,
-      total: 0,  
-      currentPage3: 5,
+      total: 0,
       tableData: [],
       formInline: {
-        user: "",
-        region: "",
-        date1: "",
-        date2: "",
+        isStatus: "",
+        meetingName: ""
       },
       form: {
         name: "",
@@ -240,7 +236,14 @@ export default {
   methods: {
    query() {
       this.$axios
-        .get(`/activityBooking/list?page=${this.page}&size=${this.size}`)
+        .get(`/meetingArea/list`,{
+          params: {
+            page:this.page,
+            size:this.size,
+            meetingName: this.formInline.meetingName,
+            isStatus: this.formInline.isStatus
+          },
+        })
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
