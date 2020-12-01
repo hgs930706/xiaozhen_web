@@ -437,6 +437,7 @@ export default {
               type: "success",
             });
             this.dialogFormVisibleInsert = false;
+            this.query();
           } else {
             this.$message.error(data.message);
           }
