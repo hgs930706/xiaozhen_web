@@ -31,6 +31,7 @@
         <el-button type="primary" @click="insert">新建</el-button>
       </el-form-item>
     </el-form>
+
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="index" width="50" label="序号"></el-table-column>
       <el-table-column prop="streetType" label="街区"> </el-table-column>
@@ -44,23 +45,38 @@
       <el-table-column prop="enterpriseDetail" label="企业详情">
       </el-table-column>
 
-      <el-table-column prop="enterpriseQr" label="二维码"> </el-table-column>
-      <el-table-column prop="enterpriseLogo" label="图片"> </el-table-column>
+      <el-table-column prop="enterpriseQr" label="二维码">
+        <template slot-scope="scope">
+          <div class="moreImg">
+            <el-image :src="scope.row.enterpriseQr"></el-image>
+          </div>
+        </template>
+         </el-table-column>
+      <el-table-column prop="enterpriseLogo" label="图片">
+        <template slot-scope="scope">
+          <div class="moreImg">
+            <el-image :src="scope.row.enterpriseLogo"></el-image>
+          </div>
+        </template>
+         </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
-          <el-button
-            @click="handleClickTable(scope.row)"
-            type="text"
-            size="small"
+          <el-button @click="operation(scope.row)" type="text" size="small"
             >编辑</el-button
           >
-          <el-button type="text" size="small">删除</el-button>
+          <el-button
+            @click="deleteOperation(scope.row)"
+            type="text"
+            size="small"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
+
     <div class="block">
-     <el-pagination
+      <el-pagination
         style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -72,66 +88,79 @@
       >
       </el-pagination>
     </div>
+
     <div class="detail-form">
       <el-dialog title="新建" :visible.sync="dialogFormVisible">
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="序号">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.orderNum"></el-input>
           </el-form-item>
           <el-form-item label="街区">
-            <el-checkbox-group v-model="form.type">
-              <el-checkbox label="时尚文化街区" name="type"></el-checkbox>
-              <el-checkbox label="时尚艺术街区" name="type"></el-checkbox>
-            </el-checkbox-group>
+            <el-radio
+              :label="item.code"
+              v-for="(item, index) in streetList"
+              :key="index"
+              v-model="form.streetType"
+            >
+              {{ item.name }}
+            </el-radio>
           </el-form-item>
           <el-form-item label="企业名称：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.enterpriseName"></el-input>
           </el-form-item>
           <el-form-item label="企业地址：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.enterpriseEnterAddress"></el-input>
           </el-form-item>
           <el-form-item label="联系电话：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.enterpriseMobile"></el-input>
           </el-form-item>
           <el-form-item label="企业网站：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.enterpriseWeb"></el-input>
           </el-form-item>
           <el-form-item label="图片">
             <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-success="handleAvatarSuccess"
+              class="upload-demo"
+              action="#"
               :before-upload="beforeAvatarUpload"
+              multiple
+              :limit="1"
+              :on-exceed="handleExceed"
+              :on-change="handleChange"
+              :file-list="fileList"
+              list-type="picture"
             >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">
+                限制一张图片，不超过10M
+              </div>
             </el-upload>
           </el-form-item>
           <el-form-item label="企业二维码">
             <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
+              class="upload-demo"
+              action="#"
+              :before-upload="beforeAvatarUploadQr"
+              multiple
+              :limit="1"
+              :on-exceed="handleExceedQr"
+              :on-change="handleChangeQr"
+              :file-list="fileListQr"
+              list-type="picture"
             >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">
+                限制一张图片，不超过10M
+              </div>
             </el-upload>
           </el-form-item>
           <el-form-item label="企业详情：">
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">立即创建</el-button>
-            <el-button>取消</el-button>
+            <el-input v-model="form.enterpriseDetail"></el-input>
           </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+          <el-button type="primary" @click="operationUpload">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -142,26 +171,32 @@
 export default {
   data() {
     return {
-       page: 1,
+      file: "",
+      fileList: [],
+      fileQr: "",
+      fileListQr: [],
+      streetList: [],
+      page: 1,
       size: 10,
       total: 0,
       dialogFormVisible: false,
       tableData: [],
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        type1: [],
-        type2: [],
-        resource: "",
-        desc: "",
+        //新增
+        id: "",
+        orderNum: "",
+        enterpriseName: "",
+        enterpriseMobile: "",
+        enterpriseQr: "",
+        enterpriseWeb: "",
+        enterpriseLogo: "",
+        enterpriseEnterAddress: "",
+        enterpriseDetail: "",
+        streetType: "1",
       },
       formInline: {
         enterpriseName: "",
-        streetType: ""
+        streetType: "",
       },
     };
   },
@@ -176,9 +211,29 @@ export default {
       .catch((error) => {});
   },
   methods: {
-   query() {
+    deleteOperation(row) {
       this.$axios
-        .get(`/enterpriseInfo/list?page=${this.page}&size=${this.size}&enterpriseName=${this.formInline.enterpriseName}&streetType=${this.formInline.streetType}`)
+        .get(`/enterpriseInfo/delete?id=`+row.id)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            this.query();
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
+    },
+    query() {
+      this.$axios
+        .get(
+          `/enterpriseInfo/list?page=${this.page}&size=${this.size}&enterpriseName=${this.formInline.enterpriseName}&streetType=${this.formInline.streetType}`
+        )
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
@@ -198,6 +253,77 @@ export default {
     },
     insert() {
       this.dialogFormVisible = true;
+      //获取下拉框值
+      this.$axios
+        .get(`/dict/street`)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.streetList = data.data;
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
+    },
+    operation(row) {
+      this.fileList = [];
+      this.fileListQr = [];
+      this.insert();
+      //回显图片
+      this.fileList.push({ name: "xxx.jpg", url: row.enterpriseLogo });
+      this.fileListQr.push({ name: "bbb.jpg", url: row.enterpriseQr });
+      this.form = {
+        id: row.id,
+        orderNum: row.orderNum,
+        enterpriseName: row.enterpriseName,
+        enterpriseMobile: row.enterpriseMobile,
+        enterpriseWeb: row.enterpriseWeb,
+        enterpriseEnterAddress: row.enterpriseEnterAddress,
+        enterpriseDetail: row.enterpriseDetail,
+        streetType: row.streetType + "",
+      };
+    },
+    operationUpload() {
+      let formData = new FormData();
+      formData.append("file", this.file);
+      formData.append("fileQr", this.fileQr);
+      formData.append("id", this.form.id);
+      formData.append("orderNum", this.form.orderNum);
+      formData.append("enterpriseName", this.form.enterpriseName);
+      formData.append("enterpriseMobile", this.form.enterpriseMobile);
+      formData.append("enterpriseWeb", this.form.enterpriseWeb);
+      formData.append(
+        "enterpriseEnterAddress",
+        this.form.enterpriseEnterAddress
+      );
+      formData.append("enterpriseDetail", this.form.enterpriseDetail);
+      formData.append("streetType", this.form.streetType);
+      let requestConfig = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      this.$axios
+        .post(`/enterpriseInfo/insert`, formData, requestConfig)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            this.dialogFormVisible = false;
+            this.query();
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
+      this.fileList = [];
+      this.fileListQr = [];
     },
     handleClickTable(row) {
       console.log(row);
@@ -208,32 +334,39 @@ export default {
     onSubmit() {
       console.log("submit!");
     },
+    beforeAvatarUpload(file) {
+      this.file = file;
+      return false;
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 1 个文件`);
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList.slice(-3);
+    },
+    beforeAvatarUploadQr(file) {
+      this.fileQr = file;
+      return false;
+    },
+    handleExceedQr(files, fileList) {
+      this.$message.warning(`当前限制选择 1 个文件`);
+    },
+    handleChangeQr(file, fileList) {
+      this.fileListQr = fileList.slice(-3);
+    },
   },
 };
 </script>
 
 <style lang="less" scoped>
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+.moreImg {
+  display: flex;
+  flex-wrap: wrap;
+  .el-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
 }
 </style>
