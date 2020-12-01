@@ -33,19 +33,13 @@
             <el-input v-model="form.name"></el-input>
           </el-form-item>
           <el-form-item label="跳转地址：">
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">立即创建</el-button>
-            <el-button>取消</el-button>
+            <el-input v-model="form.content"></el-input>
           </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+          <el-button type="primary" @click="onSubmit">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -65,21 +59,18 @@ export default {
         date2: "",
       },
       form: {
+        id: "",
         name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        type1: [],
-        type2: [],
-        resource: "",
-        desc: "",
+        content: "",
       },
     };
   },
   created() {
-    this.$axios
+    this.query();
+  },
+  methods: {
+    query(){
+this.$axios
       .get(`/dict/maps`)
       .then(({ data }) => {
         console.log(JSON.stringify(data));
@@ -87,18 +78,42 @@ export default {
         this.total = data.data.total;
       })
       .catch((error) => {});
-  },
-  methods: {
+    },
     handleClickTable(row) {
       this.dialogFormVisible = true;
-      console.log(row);
+      this.form = {
+        id: row.id,
+        name: row.name,
+        content: row.content,
+      }
+        console.log(row);
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
     onSubmit() {
-      console.log("submit!");
-    },
+      console.log("submit!"); 
+      this.dialogFormVisible = false;
+      this.$axios
+        .post(`/dict/mapUpdate`, {
+          id: this.form.id,
+          name: this.form.name,
+          content: this.form.content,
+        })
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            this.query();
+          }else{
+            this.$message.error(data.message);
+          }
+        }).catch((error) => {
+            console.log('前端系统异常：' + error)
+        });
+    }    
   },
 };
 </script>

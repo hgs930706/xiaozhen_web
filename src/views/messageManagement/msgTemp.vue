@@ -39,7 +39,7 @@
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button
-              @click="handleClickTable(scope.row)"
+              @click="operation(scope.row)"
               type="text"
               size="small"
               >编辑</el-button
@@ -65,22 +65,16 @@
       <el-dialog title="新建" :visible.sync="dialogFormVisible">
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="模板名称：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.templateName"></el-input>
           </el-form-item>
           <el-form-item label="模板id：">
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">立即创建</el-button>
-            <el-button>取消</el-button>
-          </el-form-item>
+            <el-input v-model="form.templateId"></el-input>
+          </el-form-item>         
         </el-form>
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+          <el-button type="primary" @click="onSubmit">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -96,16 +90,9 @@ export default {
       total: 0,
       dialogFormVisible: false,
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        type1: [],
-        type2: [],
-        resource: "",
-        desc: "",
+        id:'',
+        templateName: "",
+        templateId: "",       
       },
       tableData: [],
       formInline: {
@@ -148,15 +135,44 @@ export default {
     insert() {
       this.dialogFormVisible = true;
     },
+    operation(row){
+      this.insert();
+       this.form = {
+        id:row.id,
+        templateName: row.templateName,
+        templateId: row.templateId,       
+      }
+    },
+    onSubmit() {
+      this.$axios
+        .post(`/template/insert`, {
+          id: this.form.id,
+          templateName: this.form.templateName,
+          templateId: this.form.templateId,
+        })
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            this.dialogFormVisible = false;
+            this.query();
+          }else{
+            this.$message.error(data.message);
+          }
+        }).catch((error) => {
+            console.log('前端系统异常：' + error)
+        });
+      console.log("submit!");
+    },
     handleClickTable(row) {
       console.log(row);
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    onSubmit() {
-      console.log("submit!");
-    },
+    
   },
 };
 </script>

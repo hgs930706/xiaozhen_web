@@ -14,7 +14,7 @@
             type="datetime"
             placeholder="选择日期"
             v-model="formInline.createTime"
-             value-format="yyyy-MM-dd HH:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             style="width: 100%"
           ></el-date-picker>
         </el-form-item>
@@ -23,23 +23,24 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="query">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">导出</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <div v-for="item in tableData" :key="item">
-      <div style="background-color: #ccc">
-        <p>{{ item.createTime }}</p>
-        <p>{{ item.openId }}</p>
-        <p>{{ item.remark }}</p>
+    <div style="background-color: #f2f2f2; padding: 20px 20px 80px 20px;margin-right:20px">
+      <div v-for="item in tableData" :key="item">
+        <div style="width: 80%; background-color: #ffffff; padding: 10px;margin-bottom:20px">
+          <p>{{ item.createTime }}<span style="padding-left: 50px;">{{ item.openId }}</span></p>
+          <p>{{ item.remark }}</p>
+        </div>        
       </div>
     </div>
     <div class="block">
       <el-pagination
-        style="text-align: right"
+        style="text-align: left"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="page"
@@ -57,20 +58,20 @@
 export default {
   data() {
     return {
-       page: 1,
-      size: 10,
+      page: 1,
+      size: 5,
       total: 0,
       test: [1, 2, 3],
       tableData: [],
       formInline: {
         nickname: "",
-        createTime: ""
+        createTime: "",
       },
     };
   },
   created() {
     this.$axios
-      .get(`/feedback/list?page=1&size=10`)
+      .get(`/feedback/list?page=1&size=5`)
       .then(({ data }) => {
         console.log(JSON.stringify(data));
         this.tableData = data.data.list;
@@ -79,9 +80,11 @@ export default {
       .catch((error) => {});
   },
   methods: {
-   query() {
+    query() {
       this.$axios
-        .get(`/feedback/list?page=${this.page}&size=${this.size}&nickname=${this.formInline.nickname}&createTime=${this.formInline.createTime}`)
+        .get(
+          `/feedback/list?page=${this.page}&size=${this.size}&nickname=${this.formInline.nickname}&createTime=${this.formInline.createTime}`
+        )
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
