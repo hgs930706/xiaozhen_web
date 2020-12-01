@@ -77,7 +77,7 @@
             type="text"
             size="small"
             >拒绝</el-button
-          >       
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -96,8 +96,8 @@
     </div>
 
     <div class="detail-form">
-      <el-dialog title="同意预约申请" :visible.sync="dialogFormVisible">
-        <el-form :model="detail">        
+      <el-dialog title="预约申请" :visible.sync="dialogFormVisible">
+        <el-form :model="detail">
           <el-form-item label="用户名：" :label-width="formLabelWidth">
             <labe>{{ detail.openId }}</labe>
           </el-form-item>
@@ -114,7 +114,9 @@
             <labe>{{ detail.joinPeople }}</labe>
           </el-form-item>
           <el-form-item label="预约会议时间：" :label-width="formLabelWidth">
-            <labe>{{ detail.bookingStartTime }}--{{ detail.bookingEndTime }}</labe>
+            <labe
+              >{{ detail.bookingStartTime }}--{{ detail.bookingEndTime }}</labe
+            >
           </el-form-item>
           <el-form-item label="提交预约时间：" :label-width="formLabelWidth">
             <labe>{{ detail.createTime }}</labe>
@@ -137,7 +139,11 @@
           <el-form-item label="备注：" :label-width="formLabelWidth">
             <labe>{{ detail.remark }}</labe>
           </el-form-item>
-           <el-form-item v-if="status" label="拒绝原因：" :label-width="formLabelWidth" >
+          <el-form-item
+            v-if="status"
+            label="拒绝原因："
+            :label-width="formLabelWidth"
+          >
             <el-input
               type="textarea"
               :rows="2"
@@ -150,7 +156,9 @@
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-           <el-button type="primary" @click="onSubmit()">{{status ? "拒绝" : "确 定"}}</el-button>
+          <el-button type="primary" @click="onSubmit()">{{
+            status ? "拒绝" : "确 定"
+          }}</el-button>
         </div>
       </el-dialog>
     </div>
@@ -239,11 +247,11 @@ export default {
         bookingEndTime: "",
         meetingTable: "",
         meetingType: "",
-        meetingGoods:'',
-        remark:'',
-        meetingName:'',
-        meetingAddress:'',
-      }
+        meetingGoods: "",
+        remark: "",
+        meetingName: "",
+        meetingAddress: "",
+      },
     };
   },
   created() {
@@ -261,8 +269,8 @@ export default {
       this.$axios
         .get(`/meetingAreaBooking/list`, {
           params: {
-            page:this.page,
-            size:this.size,
+            page: this.page,
+            size: this.size,
             meetingName: this.formInline.meetingName,
             bookingStartTime: this.formInline.bookingStartTime,
             bookingEndTime: this.formInline.bookingEndTime,
@@ -286,37 +294,41 @@ export default {
       this.query();
       console.log(`当前页: ${val}`);
     },
-    handleClickTable(row,status) {     
+    handleClickTable(row, status) {
       this.status = status;
       this.dialogFormVisible = true;
       this.$axios
         .get(`/meetingAreaBooking/detail?id=` + row.id)
         .then(({ data }) => {
-          let obj = data.data;         
-          this.detail= {
-            id: row.id,
-            openId: obj.openId,
-            bookingUnit: obj.bookingUnit,
-            bookingPerson: obj.bookingPerson,
-            mobile: obj.mobile,
-            joinPeople: obj.joinPeople,
-            bookingStartTime: obj.bookingStartTime,
-            bookingEndTime: obj.bookingEndTime,
-            meetingTable: obj.meetingTable,
-            meetingType: obj.meetingType,
-            meetingGoods:obj.meetingGoods,
-            remark:obj.remark,
-            meetingName:obj.meetingName,
-            meetingAddress:obj.meetingAddress,
-          }         
-        });   
+          if (data.code == 0) {
+            let obj = data.data;
+            this.detail = {
+              id: row.id,
+              openId: obj.openId,
+              bookingUnit: obj.bookingUnit,
+              bookingPerson: obj.bookingPerson,
+              mobile: obj.mobile,
+              joinPeople: obj.joinPeople,
+              bookingStartTime: obj.bookingStartTime,
+              bookingEndTime: obj.bookingEndTime,
+              meetingTable: obj.meetingTable,
+              meetingType: obj.meetingType,
+              meetingGoods: obj.meetingGoods,
+              remark: obj.remark,
+              meetingName: obj.meetingName,
+              meetingAddress: obj.meetingAddress,
+            };
+          } else {
+            this.$message.error(data.message);
+          }
+        });
       console.log(row);
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
     onSubmit() {
-       this.dialogFormVisible = false;
+      this.dialogFormVisible = false;
       //拒绝
       this.$axios
         .post(`/meetingAreaBooking/approval`, {
@@ -330,7 +342,7 @@ export default {
               message: data.message,
               type: "success",
             });
-          }else{
+          } else {
             this.$message.error(data.message);
           }
         });

@@ -12,18 +12,16 @@
         <el-input v-model="formInline.username"></el-input>
       </el-form-item>
       <el-form-item label="角色">
-        <el-select v-model="formInline.role" placeholder="审批状态">
+        <el-select v-model="formInline.role" placeholder="角色">
           <el-option label="全部" value=""></el-option>
-          <el-option label="待审批" value="0"></el-option>
-          <el-option label="同意" value="1"></el-option>
-          <el-option label="拒绝" value="2"></el-option>
+          <el-option :label="item.name" :value="item.id"  v-for="(item, index) in rolesList" :key="index"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="formInline.isStatus" placeholder="审批状态">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="正常" value="1"></el-option>
-            <el-option label="停用" value="0"></el-option>
+          <el-option label="全部" value=""></el-option>
+          <el-option label="正常" value="1"></el-option>
+          <el-option label="停用" value="0"></el-option>
         </el-select>
       </el-form-item>
 
@@ -54,7 +52,7 @@
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button
-            @click="handleClickTable(scope.row)"
+            @click="operation(scope.row)"
             type="text"
             size="small"
             >编辑</el-button
@@ -63,7 +61,7 @@
       </el-table-column>
     </el-table>
     <div class="block">
-     <el-pagination
+      <el-pagination
         style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -75,51 +73,62 @@
       >
       </el-pagination>
     </div>
+
     <div class="detail-form">
       <el-dialog title="新建" :visible.sync="dialogFormVisible">
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="用户名：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.username"></el-input>
           </el-form-item>
           <el-form-item label="密码：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.password"></el-input>
           </el-form-item>
           <el-form-item label="真实姓名：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="form.realName"></el-input>
           </el-form-item>
 
-          <el-form-item label="图片">
+          <el-form-item label="图片：">
             <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-success="handleAvatarSuccess"
+              class="upload-demo"
+              action="#"
               :before-upload="beforeAvatarUpload"
+              multiple
+              :limit="1"
+              :on-exceed="handleExceed"
+              :on-change="handleChange"
+              :file-list="fileList"
+              list-type="picture"
             >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">
+                限制一张图片，不超过10M
+              </div>
             </el-upload>
           </el-form-item>
-          <el-form-item label="角色">
-            <el-checkbox-group v-model="form.type">
-              <el-checkbox label="超级管理员" name="type"></el-checkbox>
-              <el-checkbox label="场地管理员" name="type"></el-checkbox>
+          <el-form-item label="角色：">
+            <el-checkbox-group v-model="form.roles">
+              <el-checkbox
+                :label="item.id"
+                v-for="(item, index) in rolesList"
+                :key="index"
+                >{{ item.name }}</el-checkbox
+              >
             </el-checkbox-group>
           </el-form-item>
 
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">立即创建</el-button>
-            <el-button>取消</el-button>
+          <el-form-item label="状态：">
+            <el-radio v-model="form.isStatus" label="1">正常</el-radio>
+            <el-radio v-model="form.isStatus" label="0">停用</el-radio>
           </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+          <el-button type="primary" @click="operationUpload">确 定</el-button>
         </div>
       </el-dialog>
     </div>
+    
   </div>
 </template>
 
@@ -127,8 +136,10 @@
 export default {
   data() {
     return {
-      imageUrl:'',
-       page: 1,
+      rolesList: [],
+      file: "",
+      fileList: [],
+      page: 1,
       size: 10,
       total: 0,
       dialogFormVisible: false,
@@ -136,19 +147,16 @@ export default {
       formInline: {
         username: "",
         role: "",
-        isStatus: ""
+        isStatus: "",
       },
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        type1: [],
-        type2: [],
-        resource: "",
-        desc: "",
+      form: {  
+        id:'',      
+        username: "",
+        password: "",
+        realName: "",
+        userImage: "",
+        isStatus: "1",
+        roles:[]
       },
     };
   },
@@ -161,17 +169,40 @@ export default {
         this.total = data.data.total;
       })
       .catch((error) => {});
+      //初始化，查询下拉条件
+       this.$axios
+        .get(`/role/list`)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.rolesList = data.data;
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
   },
   methods: {
-   query() {
+    beforeAvatarUpload(file) {
+      this.file = file;
+      return false;
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 1 个文件`);
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList.slice(-3);
+    },
+    query() {
       this.$axios
-        .get(`/adminUser/list`,{
+        .get(`/adminUser/list`, {
           params: {
-            page:this.page,
-            size:this.size,
+            page: this.page,
+            size: this.size,
             username: this.formInline.username,
             role: this.formInline.role,
-            isStatus: this.formInline.isStatus
+            isStatus: this.formInline.isStatus,
           },
         })
         .then(({ data }) => {
@@ -192,8 +223,57 @@ export default {
       console.log(`当前页: ${val}`);
     },
     insert() {
-      this.dialogFormVisible = true;
+      this.dialogFormVisible = true;     
     },
+    operation(row) {
+      this.fileList = [];
+      this.insert();
+      //回显图片
+      this.fileList.push({ name: "xxx.jpg", url: row.userImage });
+      let a = row.roleIds.split(",");
+      this.form = {  
+        id: row.id,      
+        username: row.username,
+        password:'000000',
+        realName: row.realName,
+        isStatus: row.isStatus + '',
+        roles: a,
+      }
+    },
+    operationUpload() {      
+      let formData = new FormData();
+      formData.append("file", this.file);
+      formData.append("id", this.form.id);
+      formData.append("username", this.form.username); 
+      formData.append("password", this.form.password);     
+      formData.append("realName", this.form.realName);
+      formData.append("isStatus", this.form.isStatus);
+      formData.append("roles", this.form.roles);
+      let requestConfig = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      this.$axios
+        .post(`/adminUser/insert`, formData, requestConfig)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            this.dialogFormVisible = false;
+            this.query();
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
+      this.fileList = [];
+    },
+  
     handleClickTable(row) {
       console.log(row);
     },

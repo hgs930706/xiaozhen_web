@@ -124,7 +124,7 @@
             </el-checkbox-group>
           </el-form-item>
 
-          <el-form-item label="状态">
+          <el-form-item label="状态：">
             <el-radio v-model="form.isStatus" label="1">正常</el-radio>
             <el-radio v-model="form.isStatus" label="0">停用</el-radio>
           </el-form-item>

@@ -102,7 +102,7 @@
       </el-pagination>
     </div>
     <div class="detail-form">
-      <el-dialog title="同意预约申请" :visible.sync="dialogFormVisible">
+      <el-dialog title="预约申请" :visible.sync="dialogFormVisible">
         <el-form :model="detail">
           <el-form-item label="用户名：" :label-width="formLabelWidth">
             <labe>{{ detail.openId }}</labe>
@@ -159,7 +159,9 @@
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="onSubmit()">{{status ? "拒绝" : "确 定"}}</el-button>
+          <el-button type="primary" @click="onSubmit()">{{
+            status ? "拒绝" : "确 定"
+          }}</el-button>
         </div>
       </el-dialog>
     </div>
@@ -250,22 +252,26 @@ export default {
       this.$axios
         .get(`/receiveBooking/detail?id=` + row.id)
         .then(({ data }) => {
-          let obj = data.data;
-          this.detail = {
-            id: row.id,
-            openId: obj.openId,
-            bookingCompany: obj.bookingCompany,
-            bookingName: obj.bookingName,
-            mobile: obj.mobile,
-            visitCount: obj.visitCount,
-            visitType: obj.visitType,
-            bookingTime: obj.bookingTime,
-            createTime: obj.createTime,
-            remark: obj.remark,
-            images: obj.images,
-          };
+          if (data.code == 0) {
+            let obj = data.data;
+            this.detail = {
+              id: row.id,
+              openId: obj.openId,
+              bookingCompany: obj.bookingCompany,
+              bookingName: obj.bookingName,
+              mobile: obj.mobile,
+              visitCount: obj.visitCount,
+              visitType: obj.visitType,
+              bookingTime: obj.bookingTime,
+              createTime: obj.createTime,
+              remark: obj.remark,
+              images: obj.images,
+            };
+          } else {
+            this.$message.error(data.message);
+          }
         })
-        .catch((error) => {});    
+        .catch((error) => {});
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -285,7 +291,7 @@ export default {
               message: data.message,
               type: "success",
             });
-          }else{
+          } else {
             this.$message.error(data.message);
           }
         });
