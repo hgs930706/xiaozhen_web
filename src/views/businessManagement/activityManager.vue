@@ -74,7 +74,7 @@
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button
-              @click="handleClickTable(scope.row)"
+              @click="handleClickTableDetail(scope.row)"
               type="text"
               size="small"
               >详情</el-button
@@ -151,19 +151,20 @@
           <el-form-item label="图片">
             <el-upload
               class="upload-demo"
-              action="#"              
-              :before-upload="beforeAvatarUpload"             
+              action="#"
+              :before-upload="beforeAvatarUpload"
               multiple
               :limit="1"
               :on-exceed="handleExceed"
               :on-change="handleChange"
               :file-list="fileList"
+              list-type="picture"
             >
               <el-button size="small" type="primary">点击上传</el-button>
               <div slot="tip" class="el-upload__tip">
                 限制一张图片，不超过10M
               </div>
-            </el-upload>           
+            </el-upload>
           </el-form-item>
           <el-form-item label="活动备注：">
             <el-input v-model="form.activityRemark"></el-input>
@@ -189,23 +190,18 @@
 
     <div class="detail-form">
       <el-dialog title="活动详情" :visible.sync="dialogFormVisibleDetail">
-        <el-form :model="form2" label-width="120px">
-          <el-form-item label="序号：">
-            <labe>{{ form2.name }}</labe>
-          </el-form-item>
-          <el-form-item label="会议室名称：">
-            <labe>{{ form2.name }}</labe>
-          </el-form-item>
-        </el-form>
         <el-table :data="tableData2" border style="width: 100%">
-          <el-table-column prop="date" label="活动场次" width="150">
+          <el-table-column prop="count" label="活动场次" width="150">
           </el-table-column>
-          <el-table-column prop="province" label="活动时间"> </el-table-column>
+          <el-table-column prop="activityCountStartTime" label="活开始时间">
+          </el-table-column>
+          <el-table-column prop="activityCountEndTime" label="活动结束时间">
+          </el-table-column>
 
           <el-table-column label="操作" width="150">
             <template slot-scope="scope">
               <el-button
-                @click="handleClickTable(scope.row)"
+                @click="deleteHandleClickTable(scope.row)"
                 type="text"
                 size="small"
                 >删除</el-button
@@ -218,22 +214,36 @@
 
     <div class="detail-form">
       <el-dialog title="活动-添加场次" :visible.sync="dialogFormVisibleCount">
-        <el-form ref="form" :model="form" label-width="100px">
+        <el-form ref="form" :model="formCount" label-width="100px">
           <el-form-item label="活动场次：">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="formCount.count"></el-input>
           </el-form-item>
-          <el-form-item label="活动时间：">
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">立即创建</el-button>
-            <el-button>取消</el-button>
+          <el-form-item label="活动时间">
+            <el-col :span="11">
+              <el-date-picker
+                type="datetime"
+                placeholder="选择日期"
+                v-model="formCount.activityCountStartTime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                style="width: 100%"
+              ></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="1">至</el-col>
+            <el-col :span="11">
+              <el-date-picker
+                type="datetime"
+                placeholder="选择日期"
+                v-model="formCount.activityCountEndTime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                style="width: 100%"
+              ></el-date-picker>
+            </el-col>
           </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisibleCount = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisibleCount = false"
+          <el-button type="primary" @click="insertHandleClickCount"
             >确 定</el-button
           >
         </div>
@@ -246,7 +256,7 @@
 export default {
   data() {
     return {
-      file:'',
+      file: "",
       fileList: [],
       page: 1,
       size: 10,
@@ -254,8 +264,14 @@ export default {
       dialogFormVisibleCount: false,
       dialogFormVisibleDetail: false,
       dialogFormVisibleInsert: false,
+      formCount: {
+        activityId: "",
+        count: "",
+        activityCountStartTime: "",
+        activityCountEndTime: "",
+      },
       form: {
-        id:'',
+        id: "",
         activityName: "",
         startTime: "",
         endTime: "",
@@ -264,9 +280,6 @@ export default {
         activityImage: "",
         activityRemark: "",
         isStatus: "1",
-      },
-      form2: {
-        name: "123",
       },
       tableData: [],
       tableData2: [],
@@ -288,7 +301,50 @@ export default {
       })
       .catch((error) => {});
   },
-  methods: {    
+  methods: {
+    handleClickCount(row) {
+      this.dialogFormVisibleCount = true;
+      this.formCount.activityId = row.id;
+    },
+    insertHandleClickCount() {
+      this.$axios
+        .post(`/activityCount/insert`, {
+          activityId: this.formCount.activityId,
+          count: this.formCount.count,
+          activityCountStartTime: this.formCount.activityCountStartTime,
+          activityCountEndTime: this.formCount.activityCountEndTime,
+        })
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            this.dialogFormVisibleCount = false;
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
+    },
+    handleClickTableDetail(row) {
+      this.dialogFormVisibleDetail = true;
+      this.$axios
+        .get(`/activity/detail?id=` + row.id)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.tableData2 = data.data.countDetails;
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
+      console.log(row);
+    },
     query() {
       this.$axios
         .get(`/activity/list`, {
@@ -318,23 +374,24 @@ export default {
       this.query();
       console.log(`当前页: ${val}`);
     },
-    beforeAvatarUpload(file) {   
-      this.file = file;  
-      // this.fileList.push(file)  
+    beforeAvatarUpload(file) {
+      this.file = file;
       return false;
     },
     handleExceed(files, fileList) {
-        this.$message.warning(`当前限制选择 1 个文件`);
+      this.$message.warning(`当前限制选择 1 个文件`);
     },
     handleChange(file, fileList) {
-        this.fileList = fileList.slice(-3);
+      this.fileList = fileList.slice(-3);
     },
-    insert(){
-        this.dialogFormVisibleInsert = true;
+    insert() {
+      this.dialogFormVisibleInsert = true;
     },
     operation(row) {
-      this.dialogFormVisibleInsert = true;    
-      this.fileList.push({name:"xxx.jpg",url:row.activityImage})
+      this.fileList = [];
+      this.dialogFormVisibleInsert = true;
+      //回显图片
+      this.fileList.push({ name: "xxx.jpg", url: row.activityImage });
       this.form = {
         id: row.id,
         activityName: row.activityName,
@@ -349,11 +406,17 @@ export default {
     },
     operationUpload() {
       let formData = new FormData();
-      formData.append("file", this.file); 
+      formData.append("file", this.file);
       formData.append("id", this.form.id);
       formData.append("activityName", this.form.activityName);
-      formData.append("startTime", this.form.startTime == null ? '' :this.form.startTime);
-      formData.append("endTime", this.form.endTime == null ? '' :this.form.startTime);
+      formData.append(
+        "startTime",
+        this.form.startTime == null ? "" : this.form.startTime
+      );
+      formData.append(
+        "endTime",
+        this.form.endTime == null ? "" : this.form.startTime
+      );
       formData.append("activityAddress", this.form.activityAddress);
       formData.append("activityDetail", this.form.activityDetail);
       formData.append("activityImage", this.form.activityImage);
@@ -373,7 +436,7 @@ export default {
               message: data.message,
               type: "success",
             });
-            this.dialogFormVisibleInsert = false;            
+            this.dialogFormVisibleInsert = false;
           } else {
             this.$message.error(data.message);
           }
@@ -381,19 +444,26 @@ export default {
         .catch((error) => {
           console.log("前端系统异常：" + error);
         });
-        this.fileList = [];
+      this.fileList = [];
     },
-    
-    handleClickCount() {
-      this.dialogFormVisibleCount = true;
-    },
-    handleClickTable(row) {
-      this.dialogFormVisibleDetail = true;
-      console.log(row);
-    },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
+    deleteHandleClickTable(row) {
+      this.$axios
+        .get(`/activityCount/delete?id=` + row.id)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            this.dialogFormVisibleDetail = false;
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
+    },   
     onSubmit() {
       console.log("submit!");
     },
