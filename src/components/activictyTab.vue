@@ -223,7 +223,6 @@ export default {
     },
     handleClickTable(row,status) {     
       this.status = status;
-      alert(status);
       this.dialogFormVisible = true;
       this.$axios
         .get(`/activityBooking/detail?id=` + row.id)

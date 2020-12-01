@@ -273,18 +273,7 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
-      this.formData.append("file", file);
-      this.formData.append("file", file2);
-      this.formData.append("file", file3);
-      // const isJPG = file.type === "image/jpeg";
-      // const isLt2M = file.size / 1024 / 1024 < 2;
-
-      // if (!isJPG) {
-      //   this.$message.error("上传头像图片只能是 JPG 格式!");
-      // }
-      // if (!isLt2M) {
-      //   this.$message.error("上传头像图片大小不能超过 2MB!");
-      // }
+      this.formData.append("file", file);     
       return false;
     },
     insert() {
@@ -292,12 +281,7 @@ export default {
     },
     onSubmit() {
       console.log("submit!");
-      this.formData.append("file", file);
-      this.formData.append("meetingName", "第-个会议场地");
-      this.formData.append("属性1", "第一个会议场地");
-      this.formData.append("属性2", "第2个会议场地");
-      this.formData.append("属性3", "第3个会议场地");
-      this.formData.append("属性4", "第4个会议场地");
+      this.formData.append("meetingName", "第-个会议场地");  
       let requestConfig = {
         headers: {
           "Content-Type": "multipart/form-data",
