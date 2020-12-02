@@ -216,6 +216,8 @@ export default {
         .then(({ data }) => {
           this.tableData = data.data.list;
           this.total = data.data.total;
+        }).catch((error) => {
+          console.log('没有活动权限2'+error)
         });
     },
     handleSizeChange(val) {

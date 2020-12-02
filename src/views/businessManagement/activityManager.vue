@@ -358,10 +358,13 @@ export default {
           },
         })
         .then(({ data }) => {
+           
           this.tableData = data.data.list;
           this.total = data.data.total;
         })
-        .catch((error) => {});
+        .catch((error) => {
+       
+        });
     },
     handleSizeChange(val) {
       this.size = val;

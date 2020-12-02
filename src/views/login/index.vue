@@ -40,7 +40,7 @@
             ></el-input>
 
             <span class="demonstration"
-              ><el-image src="http://localhost:8081/test/verifyCode"></el-image
+              ><el-image src="http://localhost:8081/user/verifyCode"></el-image
             ></span>
           </el-form-item>
 
@@ -71,19 +71,22 @@ export default {
         .post(`/login`, {
           username: this.ruleForm.username,
           password: this.ruleForm.password,
-
-        }).then(response => {
+        })
+        .then((response) => {
           let authorization = response.headers["authorization"];
-          console.log(authorization)
-          if('fail' === authorization){
-            alert('登录失败');
-            return;
+          console.log(response);
+          if (authorization && authorization !== 'fail') {
+            //获取并存储服务器返回的AuthorizationToken信息
+            localStorage.setItem("authorization", authorization);
+            //登录成功跳转页面
+            this.$router.push("/home/page");
+          }else if(authorization === 'fail'){
+              alert("密码错误");
+          }else{
+              alert("系统异常");
           }
-          //获取并存储服务器返回的AuthorizationToken信息
-          localStorage.setItem("authorization", authorization);
-          //登录成功跳转页面
-          this.$router.push('/home/page');
-        }).catch((error) => {
+        })
+        .catch((error) => {
           console.log("前端系统异常：" + error);
         });
     },

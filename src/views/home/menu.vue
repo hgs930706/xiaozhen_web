@@ -84,8 +84,12 @@
               下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>密码修改</el-dropdown-item>
-              <el-dropdown-item>退出登录</el-dropdown-item>
+              <el-dropdown-item
+                ><a @click="modifypass">密码修改</a></el-dropdown-item
+              >
+              <el-dropdown-item
+                ><a @click="loginout">退出登录</a></el-dropdown-item
+              >
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -106,6 +110,15 @@ export default {
     };
   },
   methods: {
+    modifypass() {
+      alert("修改密码");
+    },
+    loginout() {
+      //清理缓存
+      localStorage.clear();
+      this.$router.push("/login");
+      // alert("退出登录");
+    },
     switchNav() {
       this.isCollapse = !this.isCollapse;
     },
