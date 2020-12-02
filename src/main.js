@@ -39,14 +39,13 @@ axios.interceptors.response.use(response => {
   let result = error.response;
   switch (result.status) {
     case 403:
-      if ("Forbidden" === result.data.error) {
+      if ("Forbidden" === result.data) {
         elementUI.Message.warning("页面权限被禁止");
       } else {
-        elementUI.Message.warning("请登录");
+        elementUI.Message.warning("登录已过期，请重新登录");
          //清理缓存
          localStorage.clear();
         // 拒绝访问，请重新登录               
-        // window.location.href = '/#/login';
         router.push("/login");
       }
       break;

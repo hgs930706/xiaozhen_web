@@ -444,11 +444,12 @@ export default {
           } else {
             this.$message.error(data.message);
           }
+          this.fileList = [];
         })
         .catch((error) => {
           console.log("前端系统异常：" + error);
         });
-      this.fileList = [];
+      
     },
     deleteHandleClickTable(row) {
       this.$axios
