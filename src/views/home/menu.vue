@@ -76,12 +76,10 @@
         </div>
 
         <div class="info">
-          <el-avatar
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-          ></el-avatar>
+          <el-avatar :src="loginImg"></el-avatar>
           <el-dropdown trigger="click" :placement="bottom">
             <span class="el-dropdown-link">
-              下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+              {{ realName }}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item
@@ -98,6 +96,39 @@
         <router-view />
       </div>
     </div>
+
+    <div>
+      <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
+        <el-form :model="form" label-width="80px">
+          <el-form-item>
+            <el-row>
+              <el-col :offset="5" :span="3"> 旧密码： </el-col>
+              <el-col :span="8">
+                <el-input type="password" v-model="form.oldPassword"></el-input>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :offset="5" :span="3"> 新密码： </el-col>
+              <el-col :span="8">
+                <el-input type="password" v-model="form.newPassword"></el-input>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :offset="5" :span="3"> 确认密码： </el-col>
+              <el-col :span="8">
+                <el-input
+                  type="password"
+                  v-model="form.confirmPassword"
+                ></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="onSumbit">保存</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -105,13 +136,60 @@
 export default {
   data() {
     return {
+      dialogFormVisible: false,
+      form: {
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      },
+      realName: "未知用户",
+      loginImg:
+        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
       bottom: "bottom",
       isCollapse: false,
     };
   },
+  created() {
+    this.$axios
+      .get(`/adminUser/info`)
+      .then(({ data }) => {
+        if (data.code == 0) {
+          this.loginImg = data.data.userImage;
+          this.realName = data.data.realName;
+        } else {
+          this.$message.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.log("前端系统异常：" + error);
+      });
+  },
   methods: {
     modifypass() {
-      alert("修改密码");
+      this.dialogFormVisible = true;
+    },
+    onSumbit() {
+      this.$axios
+        .post(`/adminUser/reset`, {
+          oldPassword: this.form.oldPassword,
+          newPassword: this.form.newPassword,
+          confirmPassword: this.form.confirmPassword
+        })
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.$message({
+              message: data.message,
+              type: "success",
+            });
+            // this.loginout();
+            this.dialogFormVisible = false;
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.log("前端系统异常：" + error);
+        });
     },
     loginout() {
       //清理缓存
@@ -127,6 +205,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-row {
+  margin-bottom: 10px;
+}
+.dialog-footer {
+  text-align: center;
+}
 #home {
   width: 100%;
   height: 100%;

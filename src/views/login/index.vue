@@ -38,14 +38,13 @@
               v-model="ruleForm.checkPass"
               autocomplete="off"
             ></el-input>
-
-            <span class="demonstration"
-              ><el-image src="http://localhost:8081/user/verifyCode"></el-image
-            ></span>
+            <el-image src="http://localhost:8081/user/verifyCode"></el-image>
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="submitForm()">登录</el-button>
+            <el-button type="primary" @click="submitForm()" :loading="submitBtn"
+              >登录</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -57,6 +56,7 @@
 export default {
   data() {
     return {
+      submitBtn: false,
       src:
         "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
       ruleForm: {
@@ -66,7 +66,8 @@ export default {
     };
   },
   methods: {
-    submitForm(formName) {
+    submitForm() {
+      this.submitBtn = true;
       this.$axios
         .post(`/login`, {
           username: this.ruleForm.username,
@@ -75,20 +76,22 @@ export default {
         .then((response) => {
           let authorization = response.headers["authorization"];
           console.log(response);
-          if (authorization && authorization !== 'fail') {
+          if (authorization && authorization !== "fail") {            
             //获取并存储服务器返回的AuthorizationToken信息
             localStorage.setItem("authorization", authorization);
             //登录成功跳转页面
             this.$router.push("/home/page");
-          }else if(authorization === 'fail'){
-              alert("密码错误");
-          }else{
-              alert("系统异常");
+          } else if (authorization === "fail") {
+            this.$message.error("用户名或密码错误");
+          } else {
+            alert("系统异常");
           }
+          this.submitBtn = false;
         })
         .catch((error) => {
           console.log("前端系统异常：" + error);
         });
+      
     },
   },
 };
