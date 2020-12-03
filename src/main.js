@@ -17,10 +17,12 @@ Vue.use(elementUI)
 // 导入axios
 import axios from 'axios'
 Vue.prototype.$axios = axios;
-//默认地址和端口，自行修改。
-axios.defaults.baseURL = 'http://localhost:8081'; //本地
 //没有此设置，后端无法将数据保存到cookie中
 axios.defaults.withCredentials = true;
+//默认地址和端口，自行修改。
+// axios.defaults.baseURL = 'http://localhost:8081'; //本地
+axios.defaults.baseURL = 'http://192.168.31.27:8081'; //本地
+Vue.prototype.$host = 'http://192.168.31.27:8081';
 
 //给所有请求添加请求头
 axios.interceptors.request.use(function (config) {
@@ -56,9 +58,11 @@ axios.interceptors.response.use(response => {
   return result;
 })
 
+//导入echarts
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 
 Vue.config.productionTip = false
-
 new Vue({
   router,
   store,

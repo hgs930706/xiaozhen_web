@@ -48,7 +48,11 @@
         <el-table-column type="index" width="50" label="序号"></el-table-column>
         <el-table-column prop="openId" label="发送至"> </el-table-column>
         <el-table-column prop="nickname" label="微信昵称"> </el-table-column>
-        <el-table-column prop="msgType" label="消息类型"> </el-table-column>
+        <el-table-column prop="msgType" label="消息类型"> 
+          <template slot-scope="scope">
+          <span>{{ scope.row.msgType == 1 ? "活动消息" : scope.row.msgType == 2 ? "接待预约消息" : scope.row.msgType == 3 ? "会议场地预约消息" : "其它" }}</span>
+        </template>
+        </el-table-column>
         <el-table-column prop="name" label="预约名称"> </el-table-column>
         <el-table-column prop="receiveAddress" label="预约地址">
         </el-table-column>
@@ -57,7 +61,11 @@
         <el-table-column prop="createTime" label="消息发送时间">
         </el-table-column>
 
-        <el-table-column prop="sendStatus" label="发送状态"> </el-table-column>
+        <el-table-column prop="sendStatus" label="发送状态"> 
+          <template slot-scope="scope">
+          <span>{{ scope.row.sendStatus == 1 ? "成功" :  "失败" }}</span>
+        </template>
+        </el-table-column>
      
       </el-table>
     </div>

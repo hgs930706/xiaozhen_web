@@ -32,13 +32,13 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input
+            <el-input             
               style="width: 50%"
               type="password"
-              v-model="ruleForm.checkPass"
+              v-model="ruleForm.code"
               autocomplete="off"
             ></el-input>
-            <el-image src="http://localhost:8081/user/verifyCode"></el-image>
+            <a @click="getCode()"> <el-image :src="src"></el-image></a>
           </el-form-item>
 
           <el-form-item>
@@ -57,16 +57,57 @@ export default {
   data() {
     return {
       submitBtn: false,
-      src:
-        "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+      src: "",
       ruleForm: {
         username: "",
         password: "",
+        code: "",
       },
     };
   },
+  created() {
+    this.getCode();
+  },
   methods: {
+    getCode() {
+      this.$axios
+        .request({
+          url: "/user/verifyCode",
+          responseType: "blob",
+          method: "get",
+          params: {
+            fileName: "fileName",
+          },
+        })
+        .then((res) => {
+          let blob = new Blob([res.data], { type: "image/png" });
+          let url = window.URL.createObjectURL(blob);
+          this.src = url;
+        }),
+        (error) => {
+          console.log("系统异常：" + error);
+        };
+    },
     submitForm() {
+      this.verifyCode();
+    },
+    verifyCode() {
+      this.$axios
+        .get(`/user/getverifyCode?code=` + this.ruleForm.code)
+        .then(({ data }) => {
+          if (data.code == 0) {
+            this.loginInfo();
+          } else {
+            this.$message.error(data.message);
+            //刷新验证码
+            this.getCode();
+          }
+        })
+        .catch((error) => {
+          console.log("系统异常：" + error);
+        });
+    },
+    loginInfo() {
       this.submitBtn = true;
       this.$axios
         .post(`/login`, {
@@ -76,7 +117,7 @@ export default {
         .then((response) => {
           let authorization = response.headers["authorization"];
           console.log(response);
-          if (authorization && authorization !== "fail") {            
+          if (authorization && authorization !== "fail") {
             //获取并存储服务器返回的AuthorizationToken信息
             localStorage.setItem("authorization", authorization);
             //登录成功跳转页面
@@ -84,14 +125,14 @@ export default {
           } else if (authorization === "fail") {
             this.$message.error("用户名或密码错误");
           } else {
-            alert("系统异常");
+            console.log("login异常");
           }
           this.submitBtn = false;
         })
         .catch((error) => {
           console.log("前端系统异常：" + error);
+          this.submitBtn = false;
         });
-      
     },
   },
 };

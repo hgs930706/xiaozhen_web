@@ -69,7 +69,11 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="isStatus" label="状态"> </el-table-column>
+        <el-table-column prop="isStatus" label="状态"> 
+          <template slot-scope="scope">
+          <span>{{ scope.row.isStatus == 1 ? "正常" : "停用" }}</span>
+        </template>
+        </el-table-column>
 
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">

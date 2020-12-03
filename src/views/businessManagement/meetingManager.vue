@@ -45,7 +45,11 @@
       <el-table-column prop="meetingRemark" label="会议室备注">
       </el-table-column>
 
-      <el-table-column prop="isStatus" label="状态"> </el-table-column>
+      <el-table-column prop="isStatus" label="状态">
+        <template slot-scope="scope">
+          <span>{{ scope.row.isStatus == 1 ? "正常" : "停用" }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -429,7 +433,6 @@ export default {
         .catch((error) => {
           console.log("前端系统异常：" + error);
         });
-      
     },
     onSubmit() {},
   },
@@ -437,7 +440,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .detail-form .el-form-item {
   margin-bottom: 6px;
 }

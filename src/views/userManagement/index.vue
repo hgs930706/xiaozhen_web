@@ -38,7 +38,11 @@
       <el-table-column prop="username" label="用户名"> </el-table-column>
       <el-table-column prop="realName" label="姓名"> </el-table-column>
       <el-table-column prop="roles" label="角色"> </el-table-column>
-      <el-table-column prop="isStatus" label="状态"> </el-table-column>
+      <el-table-column prop="isStatus" label="状态"> 
+        <template slot-scope="scope">
+          <span>{{ scope.row.isStatus == 1 ? "正常" : "停用" }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="userImage" label="头像">
         <template slot-scope="scope">
           <div class="moreImg">

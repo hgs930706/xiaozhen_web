@@ -34,7 +34,11 @@
 
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column prop="streetType" label="街区"> </el-table-column>
+      <el-table-column prop="streetType" label="街区"> 
+         <template slot-scope="scope">
+          <span>{{ scope.row.streetType == 1 ? "时尚文化街区" : scope.row.streetType == 2 ? "时尚艺术街区" : scope.row.streetType == 3 ? "时尚历史街区" : "瑞丽轻奢街区" }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="enterpriseName" label="企业名称">
       </el-table-column>
       <el-table-column prop="enterpriseEnterAddress" label="企业地址">
