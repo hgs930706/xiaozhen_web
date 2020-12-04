@@ -8,12 +8,13 @@
 
 module.exports = {
   devServer: {
-    host: '192.168.31.27',
+    host: '47.105.143.238',
     port: 3001,
     open: true,
     hot: true,
     // 内网穿透
     disableHostCheck: true
   },
+  // 取消eslint校验代码 
   lintOnSave: false  
 }

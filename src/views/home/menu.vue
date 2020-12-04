@@ -2,8 +2,8 @@
  * @Author: ShenYuQiang
  * @Date: 2020-11-21 22:05:39
  * @LastEditors: ShenYuQiang
- * @LastEditTime: 2020-11-22 02:28:12
- * @FilePath: \yishangxiaozhen\src\views\home\index.vue
+ * @LastEditTime: 2020-12-03 22:59:34
+ * @FilePath: \后端\src\views\home\menu.vue
 -->
 
 <template>
@@ -15,6 +15,9 @@
           class="el-menu-vertical-demo"
           :collapse="isCollapse"
           :router="true"
+           background-color="#545c64"
+           text-color="#fff"
+           active-text-color="#ffd04b"
         >
           <el-menu-item index="/home/page">
             <i class="el-icon-s-home"></i>
@@ -278,6 +281,8 @@ export default {
       box-sizing: border-box;
       padding: 15px 10px 10px 15px;
       flex: 1;
+      width: 100%;
+      overflow: auto;
       background-color: #fff;
     }
   }

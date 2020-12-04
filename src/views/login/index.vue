@@ -72,7 +72,7 @@ export default {
     getCode() {
       this.$axios
         .request({
-          url: "/user/verifyCode",
+          url: "/adminUser/verifyCode",
           responseType: "blob",
           method: "get",
           params: {
@@ -93,12 +93,13 @@ export default {
     },
     verifyCode() {
       this.$axios
-        .get(`/user/getverifyCode?code=` + this.ruleForm.code)
+        .get(`/adminUser/getverifyCode?code=` + this.ruleForm.code)
         .then(({ data }) => {
           if (data.code == 0) {
             this.loginInfo();
           } else {
             this.$message.error(data.message);
+            this.loginInfo();
             //刷新验证码
             this.getCode();
           }

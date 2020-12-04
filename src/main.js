@@ -14,6 +14,8 @@ import elementUI, { Alert } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(elementUI)
 
+// Vue.prototype.$host = 'http://192.168.31.27:8081';
+
 // 导入axios
 import axios from 'axios'
 Vue.prototype.$axios = axios;
@@ -21,8 +23,8 @@ Vue.prototype.$axios = axios;
 axios.defaults.withCredentials = true;
 //默认地址和端口，自行修改。
 // axios.defaults.baseURL = 'http://localhost:8081'; //本地
-axios.defaults.baseURL = 'http://192.168.31.27:8081'; //本地
-Vue.prototype.$host = 'http://192.168.31.27:8081';
+// axios.defaults.baseURL = 'http://192.168.31.27:8081'; //本地
+axios.defaults.baseURL = 'http://47.105.143.238:8081'; //测试
 
 //给所有请求添加请求头
 axios.interceptors.request.use(function (config) {
